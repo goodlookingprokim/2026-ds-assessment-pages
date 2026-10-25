@@ -36,7 +36,7 @@ def base(number, title, subtitle):
     text(draw, (51, 269), subtitle, 31, MUTED)
     draw.line((48, 836, 1550, 836), fill=LINE, width=3)
     text(draw, (50, 850), "질문 선택 → 축·색 설정 → 결과 읽기 → 화면 저장", 26, MUTED)
-    text(draw, (1480, 850), f"{number}/4", 26, MUTED)
+    text(draw, (1480, 850), f"{number}/6", 26, MUTED)
     return image, draw
 
 
@@ -67,7 +67,7 @@ for y, label, detail in [
     text(draw, (421, y + 2), detail, 31, INK)
 image.save(HERE / "02_axes_workflow.png")
 
-image, draw = base(3, "실제 Orange 화면에서 확인할 곳", "2026.10.21 촬영한 11번 로봇 자료 시연 화면 · 한 가지 설정 예시")
+image, draw = base(3, "실제 Orange 화면에서 확인할 곳", "개정 전 8열로 촬영한 11번 로봇 자료 · 축 설정 예시")
 shot = Image.open(ORIGINAL).convert("RGB")
 shot.thumbnail((1050, 625), Image.Resampling.LANCZOS)
 draw.rounded_rectangle((42, 343, 1135, 790), 18, fill=WHITE, outline=LINE, width=3)
@@ -90,6 +90,16 @@ card(draw, 546, "2", "결과 화면", "그래프·가로축·세로축·색상 �
 text(draw, (66, 741), "저장한 .ows를 다시 열어 확인한 뒤, 설문에 파일과 화면을 각각 첨부하세요.", 30, GREEN, True)
 image.save(HERE / "04_capture_checklist.png")
 
+for number, name, title, subtitle, box in [
+    (5, "current-11-file-top.jpg", "현재 CSV는 180행 · 11열", "Orange File 창의 10 features + 1 meta를 확인하세요.", (0, 0, 1200, 690)),
+    (6, "current-11-file-bottom.jpg", "새 열도 직접 찾아보세요", "도움방식 · 사전친숙도 · 체감난이도 · 사례번호", (0, 580, 1200, 1180)),
+]:
+    image, draw = base(number, title, subtitle)
+    shot = Image.open(HERE / name).convert("RGB").crop(box)
+    shot.thumbnail((1390, 520), Image.Resampling.LANCZOS)
+    image.paste(shot, ((W - shot.width) // 2, 303))
+    image.save(HERE / f"{number:02d}_current_csv.png")
+
 vtt = """WEBVTT
 
 00:00:00.000 --> 00:00:07.000
@@ -103,14 +113,23 @@ vtt = """WEBVTT
 
 00:00:21.000 --> 00:00:28.000
 연결 화면과 결과 화면을 저장하세요. 작업 파일도 다시 열어 확인하세요.
+
+00:00:28.000 --> 00:00:39.000
+새 11번 CSV는 180행과 11개 열입니다. File에는 10 features와 1 meta로 표시됩니다.
+
+00:00:39.000 --> 00:00:50.000
+아래로 내리면 도움방식·사전친숙도·체감난이도가 보입니다. 질문에 맞는 열을 사용하세요.
 """
 (HERE / "diversity_addendum.vtt").write_text(vtt, encoding="utf-8")
 
+durations = [7, 7, 7, 7, 11, 11]
 concat = "".join(f"file '{(HERE / name).as_posix()}'\nduration {duration}\n" for name, duration in [
     ("01_question_choices.png", 7),
     ("02_axes_workflow.png", 7),
     ("03_real_orange_capture.png", 7),
     ("04_capture_checklist.png", 7),
+    ("05_current_csv.png", 11),
+    ("06_current_csv.png", 11),
 ])
 (HERE / "slides.ffconcat").write_text(concat, encoding="utf-8")
 silent = HERE / "diversity_silent.mp4"
@@ -119,11 +138,12 @@ subprocess.run([
     "-vf", "fps=24,format=yuv420p", "-c:v", "libx264", "-crf", "22", "-preset", "fast", "-movflags", "+faststart",
     str(silent),
 ], check=True)
-clips = [HERE / "narration" / f"{i:02d}.aiff" for i in range(1, 5)]
+clips = [HERE / "narration" / f"{i:02d}.aiff" for i in range(1, 7)]
 if not all(clip.is_file() for clip in clips):
-    raise FileNotFoundError("Four narration clips are required in orange-media/narration/")
-filter_parts = [f"[{i}:a]adelay={800 + (i - 1) * 7000}:all=1[a{i}]" for i in range(1, 5)]
-filter_parts.append("[a1][a2][a3][a4]amix=inputs=4:duration=longest:normalize=0,apad,atrim=0:28[a]")
+    raise FileNotFoundError("Six narration clips are required in orange-media/narration/")
+starts = [sum(durations[:i]) for i in range(len(durations))]
+filter_parts = [f"[{i+1}:a]adelay={800 + starts[i] * 1000}:all=1[a{i+1}]" for i in range(len(clips))]
+filter_parts.append("".join(f"[a{i}]" for i in range(1, 7)) + "amix=inputs=6:duration=longest:normalize=0,apad,atrim=0:50[a]")
 subprocess.run([
     "ffmpeg", "-y", "-v", "error", "-i", str(silent),
     *(part for clip in clips for part in ("-i", str(clip))),

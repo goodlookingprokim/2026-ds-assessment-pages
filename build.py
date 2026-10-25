@@ -102,8 +102,15 @@ def revise_orange_guide(page: str) -> str:
     page = page.replace('Color</strong>(색상)는 <code>활동유형</code>으로 고릅니다.', 'Color</strong>(색상)는 질문에 맞게 <code>집단</code>, <code>활동유형</code>, <code>도움방식</code> 중에서 고릅니다.')
     page = page.replace('점들이 보이면, 눈에 띄는 모양 하나를 찾아봅니다. 어느 쪽에 높은 점들이 많은가요?', '점들이 보이면 모인 곳과 벗어난 점을 찾습니다. 관계가 뚜렷하지 않아도 그대로 적습니다.')
     page = page.replace('실제 결과 화면. 가로축은 참여지수, 세로축은 성과지수, 색은 활동유형입니다.', '개정 전 8열 CSV로 촬영한 조작 예시. 자신의 결과는 선택한 질문의 축과 색으로 저장하세요.')
+    page = page.replace('11번 CSV를 읽은 실제 화면. 180개 사례를 확인합니다.', '개정 전 8열 CSV를 읽은 실제 화면. 180개 사례를 확인합니다.')
+    page = page.replace('실제 표 화면. 가로 스크롤을 움직이며 열 이름을 확인합니다.', '개정 전 8열 CSV의 표 화면. 현재 CSV의 새 열은 아래 사진에서 확인합니다.')
+    page = page.replace('CSV로 만든 OWS를 다시 연 실제 작업 화면.', '개정 전 8열 CSV로 만든 OWS를 다시 연 실제 작업 화면.')
     page = page.replace('11번 자료에는 빈칸이 있습니다. 선택한 두 축 중 값이 없는 6개 사례는 그래프에 나오지 않아, 180행 중 174개 점이 그려집니다.', '11번 자료의 참여·성과 열에는 빈칸이 있어 두 축을 고르면 180행 중 174개 점이 그려집니다. 다른 축을 고르면 표시되는 점 수가 달라질 수 있습니다.')
     page = page.replace('File의 7 features와 1 meta attribute는 합해 여덟 열입니다.', '개정 전 화면의 7 features와 1 meta attribute는 당시 여덟 열입니다. 현재 CSV는 열이 11개입니다.')
+    current_capture = ('<div class="note"><strong>현재 배포 CSV의 실제 Orange 화면</strong><p>아래 두 사진은 11번 새 CSV를 File에서 다시 열어 확인한 화면입니다. 180 instances, 10 features, 1 meta attribute가 합쳐서 11열입니다. 영상과 다른 열 수가 나오면 이 사진과 내려받은 CSV를 기준으로 보세요.</p></div>'
+        '<figure><a href="assets/current-11-file-top.jpg" target="_blank" rel="noopener"><img loading="lazy" src="assets/current-11-file-top.jpg" alt="현재 11열 CSV를 연 Orange File 창. 180 instances, 10 features, 1 meta attribute가 표시됨"></a><figcaption>현재 자료의 행 수와 열 구성 · 누르면 크게 볼 수 있습니다.</figcaption></figure>'
+        '<figure><a href="assets/current-11-file-bottom.jpg" target="_blank" rel="noopener"><img loading="lazy" src="assets/current-11-file-bottom.jpg" alt="현재 11열 CSV의 아래쪽 열: 도움방식, 사전친숙도_점, 체감난이도_점, 사례번호"></a><figcaption>아래로 내리면 추가된 세 열과 사례번호가 보입니다. · 누르면 크게 볼 수 있습니다.</figcaption></figure>')
+    page = page.replace('<h3>⑤ 내가 고른 질문으로 그래프 만들고 읽기</h3>', current_capture + '<h3>⑤ 내가 고른 질문으로 그래프 만들고 읽기</h3>', 1)
     page = page.replace('전체 자료를 한꺼번에 받거나 기존 Excel을 쓰려면', '전체 CSV를 받거나 기존 8열 Excel을 참고하려면')
     page = page.replace('기존 Excel 원본 ZIP 받기', '기존 8열 Excel 원본 ZIP 받기 · 이번 CSV와 열 수 다름')
     visuals = '<figure><img class="diversity-visual" src="assets/01_question_choices.png" alt="서로 다른 세 분석 질문과 그에 맞는 가로축·세로축·색 설정을 보여 주는 설명 그림"><figcaption>질문에 따라 축과 색을 다르게 고르는 방법</figcaption></figure>'
@@ -111,7 +118,8 @@ def revise_orange_guide(page: str) -> str:
     page = page.replace('<h3>⑤ 내가 고른 질문으로 그래프 만들고 읽기</h3>', '<h3>⑤ 내가 고른 질문으로 그래프 만들고 읽기</h3><figure><img class="diversity-visual" src="assets/02_axes_workflow.png" alt="질문을 고르고 Orange 산점도에서 가로축·세로축·색을 설정하는 순서"><figcaption>질문에서 그래프 설정으로 이어지는 순서</figcaption></figure>')
     page = page.replace('<h3>Windows · 기본', '<figure><img class="diversity-visual" src="assets/04_capture_checklist.png" alt="결과 화면 캡처에 그래프, 가로축, 세로축, 색 설정이 모두 보여야 한다는 확인표"><figcaption>결과 화면을 저장하기 전 확인</figcaption></figure><h3>Windows · 기본', 1)
     page = page.replace('CSV를 불러오고 두 도구를 연결하는 기존 실제 화면 시연입니다.', '개정 전 8열 CSV로 불러오기와 두 도구 연결을 촬영한 실제 화면입니다. 새 11열 CSV에서도 조작 순서는 같습니다. 질문과 축은 위 14가지 예시를 보고 직접 고르세요.')
-    new_video = '<p><strong>먼저 이 짧은 영상을 보세요.</strong> 질문에 따라 축과 색을 바꾸는 방법과 결과 화면에 남길 설정을 보여 줍니다. 화면 글씨와 자막으로 구성되어 있습니다.</p><video controls preload="metadata" poster="assets/01_question_choices.png"><source src="diversity_addendum.mp4" type="video/mp4"><track kind="captions" src="diversity_addendum.vtt" srclang="ko" label="한국어" default></video><p><a href="diversity_addendum.mp4" download>질문 선택 영상 내려받기</a></p>'
+    page = page.replace('경계 사례는 AI가 임의로 0점 처리하지 않고 교사 확인 전까지 보류한다.', '경계 사례는 근거를 다시 확인하여 교사가 판단한다.')
+    new_video = '<p><strong>먼저 이 짧은 영상을 보세요.</strong> 질문에 따른 축·색 설정과 현재 11열 CSV 화면을 보여 줍니다. 긴 실제 조작 영상의 8열 화면과 구분해서 확인하세요.</p><video controls preload="metadata" poster="assets/01_question_choices.png"><source src="diversity_addendum.mp4" type="video/mp4"><track kind="captions" src="diversity_addendum.vtt" srclang="ko" label="한국어" default></video><p><a href="diversity_addendum.mp4" download>질문과 현재 자료 확인 영상 내려받기</a></p>'
     page = page.replace('<video id="reference-video"', new_video + '<video id="reference-video"', 1)
     return add_guide_nav(page, 'orange-guide', 'orange.html', 'python.html')
 
@@ -130,12 +138,16 @@ def build_orange() -> None:
     guide = PUBLIC / "orange-guide"
     guide.mkdir(parents=True, exist_ok=True)
     (guide / "index.html").write_text(revise_orange_guide((manual / "index_student.html").read_text()))
-    for name in ["manual.mp4", "subtitles.vtt", "학생용_한장안내.pdf", "설문응답_작성가이드.pdf", "학생용_한장안내.md", "설문응답_작성가이드.md"]:
+    for name in ["학생용_한장안내.pdf", "설문응답_작성가이드.pdf", "학생용_한장안내.md", "설문응답_작성가이드.md"]:
         copy(manual / name, guide / name)
     for name in ["00_new.png", "csv_video_import.png", "csv_video_connections.png", "csv_video_table.png", "csv_video_result.png", "csv_video_reopened.png"]:
         copy(manual / "assets" / name, guide / "assets" / name)
     media = ROOT / "orange-media"
+    copy(media / "manual-student.mp4", guide / "manual.mp4")
+    copy(media / "subtitles-student.vtt", guide / "subtitles.vtt")
     for name in ["01_question_choices.png", "02_axes_workflow.png", "03_real_orange_capture.png", "04_capture_checklist.png"]:
+        copy(media / name, guide / "assets" / name)
+    for name in ["current-11-file-top.jpg", "current-11-file-bottom.jpg"]:
         copy(media / name, guide / "assets" / name)
     copy(media / "diversity_addendum.mp4", guide / "diversity_addendum.mp4")
     copy(media / "diversity_addendum.vtt", guide / "diversity_addendum.vtt")
@@ -189,7 +201,10 @@ def build_python() -> None:
     page = page.replace(old_starter, '<a class="button" href="기본예시_축제.ipynb" download>축제 기본 예시 파일 받기</a><a class="button secondary" href="https://colab.research.google.com/" target="_blank" rel="noopener">Google Colab 열기</a>')
     page = page.replace('<a class="button secondary" href="기본예시_축제.ipynb" download>기본 예시 파일 받기</a>', '')
     page = page.replace('교사가 제공한 축제 예시에서 시작합니다. 원본을 열자마자 <strong>내 Drive에 사본</strong>을 만드세요.', '축제 기본 예시 파일을 먼저 받으세요. Google Colab을 열어 받은 <code>.ipynb</code> 파일을 업로드한 뒤 <strong>내 Drive에 사본</strong>을 만드세요.')
-    page = page.replace('Colab 화면 위쪽의 파일 → Drive에 사본 저장을 누릅니다.', 'Colab에 예시 노트북을 업로드합니다. 열린 노트북에서 파일 → Drive에 사본 저장을 누릅니다.')
+    page = page.replace('Colab 화면 위쪽의 파일 → Drive에 사본 저장을 누릅니다.', 'Colab에서 파일 → 노트 열기 → 업로드 → Browse로 받은 예시 노트북을 엽니다. 열린 노트북에서 파일 → Drive에 사본 저장을 누릅니다.')
+    page = page.replace('교사가 시험한 Colab 기본 예시 화면. 자신의 사본에서 작업합니다.', '운동 시간으로 바꾼 Colab 시연 화면. 처음 받은 축제 예시와 값이 다르므로 자신의 사본에서 작업합니다.')
+    upload_figure = '<figure><a href="images/colab-upload-current.jpg" target="_blank" rel="noopener"><img loading="lazy" src="images/colab-upload-current.jpg" alt="현재 Google Colab의 Open notebook 창에서 Upload 탭과 Browse 버튼을 선택하는 화면"></a><figcaption>현재 Colab의 업로드 창. 안내 페이지에서 받은 .ipynb 파일을 Browse로 선택합니다. · 누르면 크게 볼 수 있습니다.</figcaption></figure>'
+    page = page.replace('<figure><a href="images/02-colab.png"', upload_figure + '<figure><a href="images/02-colab.png"', 1)
     old_button = '<a class="button secondary" href="제출예시_운동시간.ipynb" target="_blank" rel="noopener">운동 시간으로 바꾼 예시 보기</a>'
     assert old_button in page, "Python example button changed in source"
     page = page.replace(old_button, '')
@@ -200,8 +215,12 @@ def build_python() -> None:
     page = add_guide_nav(page, 'python-guide', 'python.html', 'index.html')
     (guide / "index.html").parent.mkdir(parents=True, exist_ok=True)
     (guide / "index.html").write_text(page)
-    for name in ["기본예시_축제.ipynb", "제출예시_운동시간.ipynb", "쉬운_동영상_매뉴얼.mp4", "자막.vtt", "대본.txt"]:
+    for name in ["기본예시_축제.ipynb", "제출예시_운동시간.ipynb"]:
         copy(source / name, guide / name)
+    python_media = ROOT / "python-media"
+    for name in ["쉬운_동영상_매뉴얼.mp4", "자막.vtt", "대본.txt"]:
+        copy(python_media / name, guide / name)
+    copy(python_media / "colab-upload-current.jpg", guide / "images" / "colab-upload-current.jpg")
     for png in (source / "images").glob("*.png"):
         copy(png, guide / "images" / png.name)
     body = '''<div class="hero"><p class="number">2차 수행평가 · Python</p><h1>내 자료로<br>계산·표·그래프 만들기</h1>

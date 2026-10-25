@@ -3,3 +3,6 @@ __pycache__/
 *.pyc
 ASSESSMENT_PIPELINE_REVIEW.md
 orange-media/slides.ffconcat
+python-media/intro-*.png
+python-media/segment-*.mp4
+python-media/segments.ffconcat
