@@ -3,6 +3,7 @@
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
+import csv
 import re
 import zipfile
 
@@ -26,6 +27,9 @@ def main() -> None:
     count = 0
     for page in ROOT.rglob("*.html"):
         text = page.read_text(encoding="utf-8")
+        nav = re.search(r'<nav class="global-nav".*?</nav>', text, re.S)
+        if not nav or any(target not in nav.group(0) for target in ('index.html', 'orange.html', 'orange-guide/index.html', 'python.html', 'python-guide/index.html')):
+            failures.append(f"Incomplete global navigation: {page.relative_to(ROOT)}")
         visible = re.sub(r"<style.*?</style>|<script.*?</script>", " ", text, flags=re.I | re.S)
         visible = re.sub(r"<[^>]+>", " ", visible)
         for phrase in (r"인공지능.{0,24}(?:평가|채점)", r"(?<![A-Za-z])AI(?![A-Za-z]).{0,24}(?:평가|채점)", r"(?:평가|채점).{0,24}(?<![A-Za-z])AI(?![A-Za-z])"):
@@ -47,12 +51,29 @@ def main() -> None:
     csvs = list((ROOT / "orange-guide/downloads/학생배포/CSV").glob("[0-9][0-9]_*.csv"))
     if len(csvs) != 30:
         failures.append(f"Expected 30 individual CSV files; found {len(csvs)}")
+    expected_columns = {"도움방식", "사전친숙도_점", "체감난이도_점"}
+    for path in csvs:
+        with path.open(encoding="utf-8-sig", newline="") as stream:
+            reader = csv.DictReader(stream)
+            if len(reader.fieldnames or []) != 11 or not expected_columns.issubset(reader.fieldnames or []) or len(list(reader)) != 180:
+                failures.append(f"Orange CSV schema/rows mismatch: {path.name}")
     with zipfile.ZipFile(ROOT / "files/orange-csv-30.zip") as archive:
         if len([name for name in archive.namelist() if re.search(r"CSV/[0-9][0-9]_.*\.csv$", name)]) != 30:
             failures.append("The Orange ZIP does not contain 30 CSV files")
     for page in ("orange.html", "python.html"):
         if "docs.google.com/forms/d/e/" not in (ROOT / page).read_text():
             failures.append(f"Missing submission form: {page}")
+    for page in ("orange.html", "orange-guide/index.html"):
+        text = (ROOT / page).read_text()
+        if len(re.findall(r'<li><strong>\d+\. .*?</strong><span>가로축', text)) < 14:
+            failures.append(f"Orange question choices missing: {page}")
+        if "question-choices.mp4" not in text and "diversity_addendum.mp4" not in text:
+            failures.append(f"Orange diversity video missing: {page}")
+    guide = (ROOT / "python-guide/index.html").read_text()
+    if '<details id="exercise-code">' not in guide or guide.count('class="notebook-code"') != 4:
+        failures.append("Python exercise example is not visible as four inline code blocks")
+    if re.search(r'<a[^>]*>운동 시간으로 바꾼 예시 보기</a>', guide):
+        failures.append("Python exercise example still opens a separate page")
     if failures:
         raise SystemExit("\n".join(failures))
     print(f"PASS: {len(list(ROOT.rglob('*.html')))} HTML pages, {count} local references, 30 individual CSV files, 2 submission forms")
