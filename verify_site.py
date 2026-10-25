@@ -12,6 +12,23 @@ import xml.etree.ElementTree as ET
 ROOT = Path(__file__).resolve().parent / "docs"
 
 
+def caption_cues(path: Path):
+    blocks = path.read_text(encoding="utf-8").strip().split("\n\n")
+    if blocks[0] != "WEBVTT":
+        raise ValueError(f"Invalid VTT header: {path}")
+    cues = []
+    for block in blocks[1:]:
+        lines = block.splitlines()
+        if " --> " not in lines[0]:
+            lines.pop(0)  # Optional cue number.
+        start, end = lines[0].split(" --> ")
+        def milliseconds(stamp):
+            hours, minutes, seconds = stamp.split(":")
+            return int(hours) * 3600000 + int(minutes) * 60000 + round(float(seconds) * 1000)
+        cues.append((milliseconds(start), milliseconds(end), " ".join(lines[1:])))
+    return cues
+
+
 class References(HTMLParser):
     def __init__(self):
         super().__init__()
@@ -87,6 +104,24 @@ def main() -> None:
         failures.append("Python exercise example is not visible as four inline code blocks")
     if re.search(r'<a[^>]*>운동 시간으로 바꾼 예시 보기</a>', guide):
         failures.append("Python exercise example still opens a separate page")
+    for relative, minimum in (("orange-guide/diversity_addendum.vtt", 6),
+                              ("orange-guide/subtitles.vtt", 60),
+                              ("python-guide/자막.vtt", 30)):
+        try:
+            cues = caption_cues(ROOT / relative)
+            if len(cues) < minimum or any(start >= end or
+                (index > 0 and start < cues[index - 1][1])
+                for index, (start, end, _) in enumerate(cues)):
+                failures.append(f"Invalid or overlapping captions: {relative}")
+        except (ValueError, IndexError) as error:
+            failures.append(f"Invalid captions: {relative} ({error})")
+    narration = (ROOT / "python-guide/대본.txt").read_text(encoding="utf-8")
+    spoken = " ".join(block.split("\n", 1)[1] for block in narration.strip().split("\n\n"))
+    captions = " ".join(text for _, _, text in caption_cues(ROOT / "python-guide/자막.vtt"))
+    spoken_words = re.findall(r"[가-힣A-Za-z0-9]+", spoken.lower())
+    caption_words = re.findall(r"[가-힣A-Za-z0-9]+", captions.lower())
+    if caption_words != spoken_words:
+        failures.append("Python captions must reproduce the spoken narration, not the slide summaries")
     if failures:
         raise SystemExit("\n".join(failures))
     print(f"PASS: {len(list(ROOT.rglob('*.html')))} HTML pages, {count} local references, 30 individual CSV files, 2 submission forms")

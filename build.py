@@ -282,6 +282,23 @@ def build_index() -> None:
     (PUBLIC / "index.html").write_text(shell("수행평가 안내", "", body))
 
 
+def version_caption_tracks() -> None:
+    """Force browsers to fetch revised VTT files after each Pages deployment."""
+    for page in PUBLIC.rglob("*.html"):
+        html = page.read_text(encoding="utf-8")
+
+        def add_version(match):
+            caption = page.parent / match.group(2)
+            if not caption.is_file():
+                return match.group(0)
+            version = sha256(caption.read_bytes()).hexdigest()[:10]
+            return f"{match.group(1)}{match.group(2)}?v={version}{match.group(3)}"
+
+        updated = re.sub(r'(<track[^>]*\bsrc=")([^"]+\.vtt)(")', add_version, html)
+        if updated != html:
+            page.write_text(updated, encoding="utf-8")
+
+
 def main() -> None:
     PUBLIC.mkdir(exist_ok=True)
     (PUBLIC / ".nojekyll").touch()
@@ -290,6 +307,7 @@ def main() -> None:
     build_orange()
     build_python()
     build_index()
+    version_caption_tracks()
 
 
 if __name__ == "__main__":

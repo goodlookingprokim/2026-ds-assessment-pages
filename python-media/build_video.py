@@ -97,25 +97,9 @@ def seconds(stamp_value):
     return hours * 3600 + minutes * 60 + whole + milliseconds / 1000
 
 
-intro_captions = [
-    "안내 페이지에서 축제 기본 예시 .ipynb 파일을 받으세요.",
-    "Google Colab에서 파일 → 노트 열기 → 업로드 → Browse로 받은 파일을 선택하세요.",
-    "노트북이 열리면 파일 → Drive에 사본 저장을 누르고, 내 사본에서 작업하세요.",
-]
-blocks = ["WEBVTT", ""]
-start = 0.0
-for number, (duration, caption) in enumerate(zip(DURATIONS, intro_captions), 1):
-    blocks += [f"{number:02d}", f"{stamp(start)} --> {stamp(start + duration)}", caption, ""]
-    start += duration
-offset = start - OLD_CUT
-original = (SOURCE / "자막.vtt").read_text()
-for block in original.split("\n\n"):
-    lines = block.strip().splitlines()
-    if len(lines) < 3 or lines[0] in {"WEBVTT", "01", "02"}:
-        continue
-    left, right = lines[1].split(" --> ")
-    blocks += [f"{int(lines[0])+1:02d}", f"{stamp(seconds(left) + offset)} --> {stamp(seconds(right) + offset)}", *lines[2:], ""]
-(HERE / "자막.vtt").write_text("\n".join(blocks).rstrip() + "\n")
+# 자막.vtt는 실제 나레이션을 발화별로 확인한 파일입니다.
+# 화면 설명을 자막으로 복사하거나 이전 영상의 VTT를 이어 붙이지 않습니다.
+offset = sum(DURATIONS) - OLD_CUT
 
 script = """00:00:00.000 안내 페이지에서 예시 파일 받기
 안녕하세요. 잘생김프로쌤입니다. 2차 수행평가는 예시 노트북을 내 자료로 바꾸고, 결과를 확인한 뒤 제출합니다.
