@@ -5,6 +5,7 @@ from pathlib import Path
 from urllib.parse import unquote, urlsplit
 import ast
 import csv
+import json
 import re
 import zipfile
 import xml.etree.ElementTree as ET
@@ -105,7 +106,7 @@ def main() -> None:
     if re.search(r'<a[^>]*>운동 시간으로 바꾼 예시 보기</a>', guide):
         failures.append("Python exercise example still opens a separate page")
     for relative, minimum in (("orange-guide/diversity_addendum.vtt", 6),
-                              ("orange-guide/subtitles.vtt", 60),
+                              ("orange-guide/subtitles.vtt", 15),
                               ("python-guide/자막.vtt", 30)):
         try:
             cues = caption_cues(ROOT / relative)
@@ -115,6 +116,18 @@ def main() -> None:
                 failures.append(f"Invalid or overlapping captions: {relative}")
         except (ValueError, IndexError) as error:
             failures.append(f"Invalid captions: {relative} ({error})")
+    voice_source = ROOT.parent / "orange-media/recapture"
+    if (ROOT / "orange-guide/assets/file-two-branches.png").read_bytes() != (voice_source / "02-canvas-branch.png").read_bytes():
+        failures.append("Orange branch guide must use the genuine current workflow capture")
+    if (ROOT / "orange-guide/manual.mp4").read_bytes() != (voice_source.parent / "manual-recaptured.mp4").read_bytes():
+        failures.append("Orange guide must publish the recaptured video")
+    if 'data-captions-burned-in' in (ROOT / "orange-guide/index.html").read_text(encoding="utf-8"):
+        failures.append("Orange guide must keep captions below the instructional video")
+    orange_spoken = " ".join(json.loads((voice_source / f"voice_{number}.json").read_text(encoding="utf-8"))["text"] for number in ("02", "03", "04"))
+    orange_captions = " ".join(text for _, _, text in caption_cues(ROOT / "orange-guide/subtitles.vtt"))
+    words = lambda text: re.findall(r"[가-힣A-Za-z0-9]+", text.lower())
+    if words(orange_spoken) != words(orange_captions):
+        failures.append("Orange subtitles must reproduce the spoken GoodlookingproKim narration")
     narration = (ROOT / "python-guide/대본.txt").read_text(encoding="utf-8")
     spoken = " ".join(block.split("\n", 1)[1] for block in narration.strip().split("\n\n"))
     captions = " ".join(text for _, _, text in caption_cues(ROOT / "python-guide/자막.vtt"))

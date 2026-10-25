@@ -1,0 +1,19 @@
+{
+  "id": "55fdd015-6134-4bcd-b76c-d8c84e9d3faa",
+  "profile_id": "4414558b-b6d6-48af-a810-b60c991040a0",
+  "profile_name": "GoodlookingproKim",
+  "text": "스캐터 플롯을 두 번 누르세요. 가로축은 참여지수, 세로축은 성과지수, 색상은 집단으로 설정합니다. 점들이 보이는지 확인하세요. 이 예시에서는 참여지수가 높은 쪽에 성과지수도 높은 점이 많이 보이지만, 같은 참여지수에서도 성과가 다릅니다. 이 그래프만으로 원인과 결과를 단정하지 마세요. 두 축의 값이 비어 있는 사례는 표시되지 않는다는 안내는 연결 오류와 구분해야 합니다.",
+  "language": "ko",
+  "audio_path": "generations/55fdd015-6134-4bcd-b76c-d8c84e9d3faa.wav",
+  "duration": 29.44,
+  "seed": 42,
+  "instruct": null,
+  "engine": "qwen",
+  "model_size": "1.7B",
+  "status": "completed",
+  "error": null,
+  "is_favorited": false,
+  "created_at": "2026-10-20T22:58:35.020321",
+  "versions": null,
+  "active_version_id": null
+}

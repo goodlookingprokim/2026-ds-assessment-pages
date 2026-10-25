@@ -1,0 +1,19 @@
+{
+  "id": "fc4473e3-5d4a-41da-8ebf-61a832a1c79d",
+  "profile_id": "4414558b-b6d6-48af-a810-b60c991040a0",
+  "profile_name": "GoodlookingproKim",
+  "text": "파일 오른쪽 연결점에서 데이터 테이블 왼쪽 연결점까지 끌어서 연결하세요. 파일에서 스캐터 플롯으로도 연결합니다. 두 개의 선이 각각 파일에서 출발해야 합니다. 데이터 테이블은 표를 확인하는 위젯이고, 스캐터 플롯은 두 수치의 관계를 점으로 보여주는 위젯입니다. 화면에 보이는 느낌표가 항상 연결 오류라는 뜻은 아닙니다. 메시지를 열어 내용을 확인하세요.",
+  "language": "ko",
+  "audio_path": "generations/fc4473e3-5d4a-41da-8ebf-61a832a1c79d.wav",
+  "duration": 27.2,
+  "seed": 42,
+  "instruct": null,
+  "engine": "qwen",
+  "model_size": "1.7B",
+  "status": "completed",
+  "error": null,
+  "is_favorited": false,
+  "created_at": "2026-10-20T22:56:07.096037",
+  "versions": null,
+  "active_version_id": null
+}

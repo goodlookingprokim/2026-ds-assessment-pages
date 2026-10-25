@@ -7,7 +7,7 @@ import subprocess
 from PIL import Image, ImageDraw, ImageFont
 
 HERE = Path(__file__).resolve().parent
-ORIGINAL = HERE.parents[1] / "outputs/1차_Orange_실습매뉴얼/assets/csv_video_result.png"
+ORIGINAL = HERE / "recapture/04-scatter-participation-performance.png"
 FONT = "/System/Library/Fonts/AppleSDGothicNeo.ttc"
 W, H = 1600, 900
 INK = "#17352d"
@@ -67,7 +67,7 @@ for y, label, detail in [
     text(draw, (421, y + 2), detail, 31, INK)
 image.save(HERE / "02_axes_workflow.png")
 
-image, draw = base(3, "실제 Orange 화면에서 확인할 곳", "개정 전 8열로 촬영한 11번 로봇 자료 · 축 설정 예시")
+image, draw = base(3, "실제 Orange 화면에서 확인할 곳", "현재 11열 CSV를 연 11번 로봇 자료 · 축 설정 예시")
 shot = Image.open(ORIGINAL).convert("RGB")
 shot.thumbnail((1050, 625), Image.Resampling.LANCZOS)
 draw.rounded_rectangle((42, 343, 1135, 790), 18, fill=WHITE, outline=LINE, width=3)

@@ -1,0 +1,19 @@
+{
+  "id": "f5d7e4c2-7a1f-4e7a-905d-51bf7fbf1917",
+  "profile_id": "4414558b-b6d6-48af-a810-b60c991040a0",
+  "profile_name": "GoodlookingproKim",
+  "text": "데이터 테이블을 두 번 눌러 표를 확인합니다. 한 행은 가상 사례 하나입니다. 사례 수와 열 이름을 살펴보고, 분석할 두 지수가 무엇을 뜻하는지 확인하세요. 이 화면은 설문지 두 번째 문항을 작성할 때 근거가 됩니다. 표를 확인했으면 창을 닫고 작업 화면으로 돌아갑니다.",
+  "language": "ko",
+  "audio_path": "generations/f5d7e4c2-7a1f-4e7a-905d-51bf7fbf1917.wav",
+  "duration": 18.8,
+  "seed": 42,
+  "instruct": null,
+  "engine": "qwen",
+  "model_size": "1.7B",
+  "status": "completed",
+  "error": null,
+  "is_favorited": false,
+  "created_at": "2026-10-20T22:57:31.648019",
+  "versions": null,
+  "active_version_id": null
+}
