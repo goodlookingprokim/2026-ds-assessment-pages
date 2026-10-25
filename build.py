@@ -12,6 +12,10 @@ SOURCE = ROOT.parent / "outputs"
 PUBLIC = ROOT / "docs"
 CAPTION_SCRIPT_VERSION = sha256((ROOT / "caption-panel.js").read_bytes()).hexdigest()[:10]
 
+
+def media_stamp(path: Path) -> str:
+    return sha256(path.read_bytes()).hexdigest()[:10]
+
 ORANGE_FORM = "https://docs.google.com/forms/d/e/1FAIpQLSel8D22f8y8r0tWJYpux0EIqAKeGsD56wiYdUVHdgLPBNUaJA/viewform"
 PYTHON_FORM = "https://docs.google.com/forms/d/e/1FAIpQLSdb_FYb6h-rQgikGn8_F4y0rpf1DCMkWUvg1huvRV6fmeYClA/viewform"
 
@@ -145,6 +149,19 @@ def revise_orange_guide(page: str) -> str:
     page = page.replace('<video id="reference-video"', new_video + '<video id="reference-video"', 1)
     page = page.replace('CSV 조작 참고 영상(10월 21일 촬영)', '현재 11열 CSV를 연 Orange 실제 화면(10월 25일 다시 캡처)')
     page = page.replace('<div class="actions"><button class="secondary" type="button" data-seek="30">00:30 자료 열기로 이동</button><button class="secondary" type="button" data-seek="65">01:05 도구 연결로 이동</button><button class="secondary" type="button" data-seek="99">01:39 그래프 보기로 이동</button><button class="secondary" type="button" data-seek="135">02:15 저장하기로 이동</button></div>', '<div class="actions"><button class="secondary" type="button" data-seek="0">00:00 두 갈래 연결</button><button class="secondary" type="button" data-seek="27">00:27 표 확인</button><button class="secondary" type="button" data-seek="46">00:46 산점도 확인</button></div>')
+    media = ROOT / "orange-media"
+    for filename in ("manual.mp4", "subtitles.vtt", "diversity_addendum.mp4", "diversity_addendum.vtt"):
+        source = media / {"manual.mp4": "manual-recaptured.mp4", "subtitles.vtt": "subtitles-recaptured.vtt"}.get(filename, filename)
+        page = re.sub(rf'src="{re.escape(filename)}(?:\?v=[^\"]*)?"',
+                      f'src="{filename}?v={media_stamp(source)}"', page)
+    recapture = media / "recapture"
+    for source, dest in (("00-file-top.png", "csv_video_import.png"),
+                         ("03-table.png", "csv_video_table.png"),
+                         ("04-scatter-participation-performance.png", "csv_video_result.png"),
+                         ("02-canvas-branch.png", "csv_video_reopened.png"),
+                         ("02-canvas-branch.png", "file-two-branches.png"),
+                         ("05-scatter-activity-satisfaction.png", "alternative-scatter.png")):
+        page = page.replace(f'assets/{dest}"', f'assets/{dest}?v={media_stamp(recapture / source)}"')
     return add_guide_nav(page, 'orange-guide', 'orange.html', 'python.html')
 
 
@@ -226,6 +243,13 @@ def build_orange() -> None:
     body += section("실습 영상", '<p>먼저 질문 선택 영상에서 다양한 축을 살펴보세요. 다음 영상은 현재 11열 CSV를 연 실제 Orange 화면에서 File의 두 갈래 연결, 표, 그래프를 보여 줍니다. 참여·성과는 조작 예시 한 가지이므로 자신의 질문에 맞춰 축과 색을 바꾸세요.</p><video controls preload="metadata" width="100%"><source src="orange-guide/question-choices.mp4" type="video/mp4"><track kind="captions" src="orange-guide/question-choices.vtt" srclang="ko" label="한국어" default></video><p>' + link("orange-guide/question-choices.mp4", "질문 선택 영상 받기") + '</p><video controls preload="metadata" width="100%" poster="orange-guide/assets/file-two-branches.png"><source src="orange-guide/manual.mp4" type="video/mp4"><track kind="captions" src="orange-guide/subtitles.vtt" srclang="ko" label="한국어" default></video><p>' + link("orange-guide/manual.mp4", "기본 조작 영상 받기") + '</p>')
     body += section("주제별 CSV", '<p>하나만 골라도 됩니다. 내려받은 CSV의 내용은 바꾸지 말고 자신의 Orange 작업 파일을 만드세요.</p><ul class="topic-list">' + ''.join(rows) + '</ul>', "topics")
     body += '<div class="submit"><div><h2>이제 제출하세요</h2><p>Google 계정으로 설문을 열고 답변과 파일을 확인한 뒤, 제출 완료 화면까지 보세요.</p></div>' + link(ORANGE_FORM, "1차 제출 설문 열기", "button") + '</div>'
+    for filename, source in (("manual.mp4", media / "manual-recaptured.mp4"),
+                             ("subtitles.vtt", media / "subtitles-recaptured.vtt"),
+                             ("question-choices.mp4", media / "diversity_addendum.mp4"),
+                             ("question-choices.vtt", media / "diversity_addendum.vtt"),
+                             ("assets/file-two-branches.png", recapture / "02-canvas-branch.png")):
+        body = body.replace(f'"orange-guide/{filename}"',
+                            f'"orange-guide/{filename}?v={media_stamp(source)}"')
     (PUBLIC / "orange.html").write_text(shell("1차 Orange 수행평가", "orange", body))
 
 
