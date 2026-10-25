@@ -7,11 +7,28 @@
     {
       "scene": "02",
       "capture": "02-canvas-branch.png",
-      "capture_sha256": "2b3bfb1255d1f3232cb0c1487fa3e0d3de58d73162c35e6c44be6de975a784f5",
+      "capture_sha256": "8fc23aa45c915f6ed9154ade0604d95ece64f1ba5265e7d0ee8164b4c5bf69bb",
       "audio_sha256": "0996ec02b2ebefdc52e3e4c7a08167bffd0852e90d1023f25109b2bd400fc05d",
       "voice_profile": "GoodlookingproKim",
       "spoken_text": "파일 오른쪽 연결점에서 데이터 테이블 왼쪽 연결점까지 끌어서 연결하세요. 파일에서 스캐터 플롯으로도 연결합니다. 두 개의 선이 각각 파일에서 출발해야 합니다. 데이터 테이블은 표를 확인하는 위젯이고, 스캐터 플롯은 두 수치의 관계를 점으로 보여주는 위젯입니다. 화면에 보이는 느낌표가 항상 연결 오류라는 뜻은 아닙니다. 메시지를 열어 내용을 확인하세요.",
-      "duration_seconds": 27.2
+      "duration_seconds": 27.2,
+      "connection_stages": [
+        {
+          "capture": "02a-canvas-unconnected.png",
+          "capture_sha256": "a1b3f6ff8e24a034d79828e0245dac308b241d097a69a99553eff5c013874cf2",
+          "duration_seconds": 6.3
+        },
+        {
+          "capture": "02b-canvas-one-link.png",
+          "capture_sha256": "422ceba2c4064fca187114c00446cb46cb5fd343346544fe200ccf78c46fbf4e",
+          "duration_seconds": 3.5
+        },
+        {
+          "capture": "02-canvas-branch.png",
+          "capture_sha256": "8fc23aa45c915f6ed9154ade0604d95ece64f1ba5265e7d0ee8164b4c5bf69bb",
+          "duration_seconds": 17.4
+        }
+      ]
     },
     {
       "scene": "03",

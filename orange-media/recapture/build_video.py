@@ -23,6 +23,11 @@ SCENE_CUE_BOUNDARIES = {
     "03": [0, 3.4, 6.1, 12.0, 15.7, 18.8],
     "04": [0, 3.2, 8.8, 10.9, 19.4, 23.2, 29.44],
 }
+BRANCH_STAGES = [
+    ("02a-canvas-unconnected.png", 6.3),
+    ("02b-canvas-one-link.png", 3.5),
+    ("02-canvas-branch.png", 17.4),
+]
 PROFILE = "4414558b-b6d6-48af-a810-b60c991040a0"
 
 
@@ -53,15 +58,26 @@ def main() -> None:
             raise ValueError(f"Incomplete scene {number}")
         seconds = duration(audio)
         segment = ROOT / f"segment_{number}.mp4"
+        image_input = ["-loop", "1", "-framerate", "15", "-i", str(image)]
+        if number == "02":
+            if abs(sum(stage_seconds for _, stage_seconds in BRANCH_STAGES) - seconds) > 0.05:
+                raise ValueError("The connection stages do not match the narration")
+            frames = ROOT / "branch-stages.ffconcat"
+            frames.write_text("ffconcat version 1.0\n" + "".join(
+                f"file '{picture}'\nduration {stage_seconds}\n"
+                for picture, stage_seconds in BRANCH_STAGES
+            ) + f"file '{BRANCH_STAGES[-1][0]}'\n", encoding="utf-8")
+            image_input = ["-f", "concat", "-safe", "0", "-i", str(frames)]
         subprocess.run([
-            "ffmpeg", "-y", "-v", "error", "-loop", "1", "-framerate", "15",
-            "-i", str(image), "-i", str(audio),
+            "ffmpeg", "-y", "-v", "error", *image_input, "-i", str(audio),
             "-vf", "scale=1920:1080:force_original_aspect_ratio=decrease,"
             "pad=1920:1080:(ow-iw)/2:(oh-ih)/2:color=0x152025,setsar=1",
             "-c:v", "libx264", "-preset", "fast", "-crf", "22", "-r", "15",
             "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "160k",
             "-t", str(seconds), "-movflags", "+faststart", str(segment),
         ], check=True)
+        if number == "02":
+            frames.unlink()
         segments.append(segment)
 
         # These are the sentences submitted to Voicebox, not descriptions of the images.
@@ -79,6 +95,10 @@ def main() -> None:
             "voice_profile": meta["profile_name"],
             "spoken_text": meta["text"],
             "duration_seconds": seconds,
+            **({"connection_stages": [{"capture": stage,
+                "capture_sha256": sha256((ROOT / stage).read_bytes()).hexdigest(),
+                "duration_seconds": stage_seconds} for stage, stage_seconds in BRANCH_STAGES]}
+                if number == "02" else {}),
         })
         offset += seconds
 
