@@ -35,10 +35,11 @@ def global_nav(active: str, prefix: str = "") -> str:
 
 
 def shell(title: str, active: str, body: str) -> str:
+    caption_assets = '<link rel="stylesheet" href="caption-panel.css"><script src="caption-panel.js" defer></script>' if '<video' in body else ''
     return f'''<!doctype html>
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="2026 데이터과학 수행평가 학생 안내와 실습 자료">
-<title>{escape(title)} · 2026 데이터과학</title><link rel="stylesheet" href="styles.css"></head>
+<title>{escape(title)} · 2026 데이터과학</title><link rel="stylesheet" href="styles.css">{caption_assets}</head>
 <body><a class="skip" href="#content">본문으로 바로 가기</a>
 <header class="site-header"><div class="wrap header-inner"><a class="brand" href="index.html">2026 데이터과학 <span>수행평가 안내</span></a>
 {global_nav(active)}</div></header>
@@ -50,7 +51,8 @@ def add_guide_nav(page: str, active: str, previous: str, next_page: str) -> str:
     nav = '<div class="assessment-nav"><div class="assessment-nav-inner">' + global_nav(active, "../") + f'<div class="assessment-neighbors"><a href="../{previous}">← 이전 페이지</a><a href="../{next_page}">다음 페이지 →</a></div></div></div>'
     page = page.replace('<body>', '<body>' + nav, 1)
     css = '<style>.assessment-nav{position:sticky;top:0;z-index:100;background:#fff;border-bottom:2px solid #145c4c;box-shadow:0 3px 10px #0001}.assessment-nav-inner{max-width:1050px;margin:auto;padding:8px 16px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}.assessment-nav .global-nav{display:flex;flex-wrap:wrap;gap:4px}.assessment-nav a{display:inline-block;padding:7px 10px;border-radius:6px;color:#173d33;text-decoration:none;font-size:14px;font-weight:700}.assessment-nav a:hover,.assessment-nav a[aria-current=page]{background:#c5e8da}.assessment-neighbors{display:flex;gap:4px}.question-choices{padding:18px;background:#eaf3ef;border:1px solid #cbd8d1;border-radius:12px;margin:20px 0}.question-choices ol{list-style:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:0}.question-choices li{background:#fff;padding:11px;border-radius:7px;border:1px solid #cbd8d1}.question-choices li strong,.question-choices li span{display:block}.question-choices li span{font-size:13px}.question-choices code{white-space:nowrap}.diversity-visual{max-width:100%}@media(max-width:600px){.assessment-nav-inner{padding:4px 8px}.assessment-nav a{font-size:12px;padding:6px}.assessment-neighbors{width:100%;justify-content:space-between}.question-choices ol{grid-template-columns:1fr}}</style>'
-    return page.replace('</head>', css + '</head>', 1)
+    assets = '<link rel="stylesheet" href="../caption-panel.css"><script src="../caption-panel.js" defer></script>'
+    return page.replace('</head>', css + assets + '</head>', 1)
 
 
 def file_item(url: str, title: str, detail: str) -> str:
@@ -257,6 +259,8 @@ def build_index() -> None:
 def main() -> None:
     PUBLIC.mkdir(exist_ok=True)
     (PUBLIC / ".nojekyll").touch()
+    copy(ROOT / "caption-panel.css", PUBLIC / "caption-panel.css")
+    copy(ROOT / "caption-panel.js", PUBLIC / "caption-panel.js")
     build_orange()
     build_python()
     build_index()
