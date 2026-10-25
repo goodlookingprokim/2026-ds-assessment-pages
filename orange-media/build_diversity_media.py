@@ -93,16 +93,16 @@ image.save(HERE / "04_capture_checklist.png")
 vtt = """WEBVTT
 
 00:00:00.000 --> 00:00:07.000
-같은 자료에서도 질문은 달라질 수 있습니다. 활동 시간과 만족도, 지원과 참여, 참여와 성과 중 하나처럼 자신만의 질문을 고르세요.
+같은 자료에서도 질문은 달라집니다. 열네 가지 중 하나를 골라 보세요.
 
 00:00:07.000 --> 00:00:14.000
-File을 Data Table과 Scatter Plot에 각각 연결하고, 질문에 맞춰 숫자 열 두 개를 축으로, 집단이나 활동유형을 색으로 고르세요.
+질문에 맞는 숫자 열 두 개를 축으로 고르고, 색도 설정하세요.
 
 00:00:14.000 --> 00:00:21.000
-이 화면은 기존 11번 로봇 자료의 실제 시연입니다. 참여와 성과는 한 가지 예시입니다. 다른 질문을 골랐다면 축도 바꾸세요.
+이 화면은 참여와 성과를 본 옛 시연입니다. 다른 질문이면 축도 바꿉니다.
 
 00:00:21.000 --> 00:00:28.000
-연결선이 보이는 화면 한 장, 그래프와 축과 색상 설정이 보이는 결과 화면 한 장을 저장하세요. 저장한 작업 파일도 다시 열어 확인합니다.
+연결 화면과 결과 화면을 각각 저장하고, 작업 파일도 다시 열어 확인하세요.
 """
 (HERE / "diversity_addendum.vtt").write_text(vtt, encoding="utf-8")
 
@@ -113,9 +113,23 @@ concat = "".join(f"file '{(HERE / name).as_posix()}'\nduration {duration}\n" for
     ("04_capture_checklist.png", 7),
 ])
 (HERE / "slides.ffconcat").write_text(concat, encoding="utf-8")
+silent = HERE / "diversity_silent.mp4"
 subprocess.run([
     "ffmpeg", "-y", "-v", "error", "-safe", "0", "-f", "concat", "-i", str(HERE / "slides.ffconcat"),
     "-vf", "fps=24,format=yuv420p", "-c:v", "libx264", "-crf", "22", "-preset", "fast", "-movflags", "+faststart",
+    str(silent),
+], check=True)
+clips = [HERE / "narration" / f"{i:02d}.aiff" for i in range(1, 5)]
+if not all(clip.is_file() for clip in clips):
+    raise FileNotFoundError("Four narration clips are required in orange-media/narration/")
+filter_parts = [f"[{i}:a]adelay={800 + (i - 1) * 7000}:all=1[a{i}]" for i in range(1, 5)]
+filter_parts.append("[a1][a2][a3][a4]amix=inputs=4:duration=longest:normalize=0,apad,atrim=0:28[a]")
+subprocess.run([
+    "ffmpeg", "-y", "-v", "error", "-i", str(silent),
+    *(part for clip in clips for part in ("-i", str(clip))),
+    "-filter_complex", ";".join(filter_parts), "-map", "0:v", "-map", "[a]",
+    "-c:v", "copy", "-c:a", "aac", "-b:a", "128k", "-movflags", "+faststart",
     str(HERE / "diversity_addendum.mp4"),
 ], check=True)
+silent.unlink()
 print(HERE / "diversity_addendum.mp4")
