@@ -51,6 +51,8 @@ def add_guide_nav(page: str, active: str, previous: str, next_page: str) -> str:
     nav = '<div class="assessment-nav"><div class="assessment-nav-inner">' + global_nav(active, "../") + f'<div class="assessment-neighbors"><a href="../{previous}">← 이전 페이지</a><a href="../{next_page}">다음 페이지 →</a></div></div></div>'
     page = page.replace('<body>', '<body>' + nav, 1)
     css = '<style>.assessment-nav{position:sticky;top:0;z-index:100;background:#fff;border-bottom:2px solid #145c4c;box-shadow:0 3px 10px #0001}.assessment-nav-inner{max-width:1050px;margin:auto;padding:8px 16px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}.assessment-nav .global-nav{display:flex;flex-wrap:wrap;gap:4px}.assessment-nav a{display:inline-block;padding:7px 10px;border-radius:6px;color:#173d33;text-decoration:none;font-size:14px;font-weight:700}.assessment-nav a:hover,.assessment-nav a[aria-current=page]{background:#c5e8da}.assessment-neighbors{display:flex;gap:4px}.question-choices{padding:18px;background:#eaf3ef;border:1px solid #cbd8d1;border-radius:12px;margin:20px 0}.question-choices ol{list-style:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:0}.question-choices li{background:#fff;padding:11px;border-radius:7px;border:1px solid #cbd8d1}.question-choices li strong,.question-choices li span{display:block}.question-choices li span{font-size:13px}.question-choices code{white-space:nowrap}.diversity-visual{max-width:100%}@media(max-width:600px){.assessment-nav-inner{padding:4px 8px}.assessment-nav a{font-size:12px;padding:6px}.assessment-neighbors{width:100%;justify-content:space-between}.question-choices ol{grid-template-columns:1fr}}</style>'
+    if active == "orange-guide":
+        css = css.replace("</style>", ".branch-layout{width:min(100%,572px);margin-inline:auto}.branch-layout img{width:100%}</style>", 1)
     assets = '<link rel="stylesheet" href="../caption-panel.css"><script src="../caption-panel.js" defer></script>'
     return page.replace('</head>', css + assets + '</head>', 1)
 
@@ -98,6 +100,19 @@ def revise_orange_guide(page: str) -> str:
     end = page.index('<p class="note"><strong>빈칸은 0점이 아닙니다.', start)
     page = page[:start] + '<p>질문은 한 가지만 골라도 됩니다. 선택한 질문에 맞춰 산점도의 숫자 열 두 개와 범주 색을 고르세요. <a href="#question-choices">14가지 질문 예시 보기</a></p>' + page[end:]
     page = page.replace('11번 예시에는 180행·8열이 있습니다. <code>참여지수_점</code>과 <code>성과지수_점</code> 열을 찾아보세요.', '현재 11번 CSV는 180행·11열입니다. 이 화면 사진은 개정 전 8열 자료로 촬영했습니다. 새 열인 <code>도움방식</code>, <code>사전친숙도_점</code>, <code>체감난이도_점</code>도 찾아보세요.')
+    page = page.replace('왼쪽 <strong>Visualize</strong>에서 <strong>Scatter Plot</strong>을 끌어 놓습니다.', '왼쪽 <strong>Visualize</strong>에서 <strong>Scatter Plot</strong>을 끌어 놓습니다. <strong>File은 왼쪽 가운데, Data Table은 오른쪽 위, Scatter Plot은 오른쪽 아래</strong>로 벌려 놓으세요. 두 연결선을 따로 볼 수 있습니다.')
+    connection_why = ('<p><strong>왜 두 곳에 연결할까요?</strong> File은 CSV를 읽어 같은 자료를 두 도구로 보냅니다. '
+        '<strong>Data Table</strong>에서는 행 수·열 이름·값과 빈칸을 확인해 자료를 제대로 읽었는지 살핍니다. '
+        '<strong>Scatter Plot</strong>에서는 고른 숫자 열 두 개를 가로축·세로축에 놓아 점의 분포와 예외를 봅니다. '
+        '따라서 <strong>File → Data Table</strong>과 <strong>File → Scatter Plot</strong>을 각각 연결하세요. '
+        'Data Table을 거쳐 Scatter Plot으로 잇는 순서가 아니라, 같은 원자료가 두 갈래로 갑니다.</p>'
+        '<p>File을 왼쪽 가운데에 두고 Data Table을 오른쪽 위, Scatter Plot을 오른쪽 아래에 두면 두 선의 출발점과 도착점이 겹치지 않아 확인하기 쉽습니다. '
+        '두 선에 <code>Data</code>가 표시되는지 살펴보세요. 위치 자체가 점수 기준은 아니며, 이 배치는 연결을 쉽게 확인하기 위한 예시입니다.</p>')
+    page = page.replace('<h3>③ File에서 두 곳으로 연결하기</h3>', '<h3>③ File에서 두 곳으로 연결하기</h3>' + connection_why, 1)
+    page = page.replace('File에서 나가는 선이 두 개인지 확인합니다.', 'File에서 출발하는 선 두 개가 각각 Data Table과 Scatter Plot에 도착하는지 확인합니다. 두 위젯 사이에 연결선이 있어야 하는 것은 아닙니다.')
+    page = page.replace('assets/csv_video_connections.png', 'assets/file-two-branches.png')
+    page = page.replace('실제 연결 화면. File의 자료를 표와 그래프로 각각 보냅니다.', '권장 배치 그림. File에서 위쪽 Data Table과 아래쪽 Scatter Plot으로 선이 각각 이어집니다.')
+    page = page.replace('<figure><a href="assets/file-two-branches.png"', '<figure class="branch-layout"><a href="assets/file-two-branches.png"', 1)
     page = page.replace('<h3>⑤ 그래프 만들고 읽기</h3>', '<h3>⑤ 내가 고른 질문으로 그래프 만들고 읽기</h3><p><a href="#question-choices">14가지 질문 예시</a>에서 하나를 고릅니다. 아래 사진의 참여·성과 축은 조작 시연용입니다. 자신의 질문에 맞는 숫자 열 두 개로 바꾸세요.</p>')
     page = page.replace('Axis x</strong>(가로축)는 <code>참여지수_점</code>으로 고릅니다.', 'Axis x</strong>(가로축)는 내가 고른 질문의 첫 번째 숫자 열로 고릅니다.')
     page = page.replace('Axis y</strong>(세로축)는 <code>성과지수_점</code>으로 고릅니다.', 'Axis y</strong>(세로축)는 내가 고른 질문의 두 번째 숫자 열로 고릅니다.')
@@ -119,7 +134,8 @@ def revise_orange_guide(page: str) -> str:
     page = page.replace('<details id="practice">', question_cards() + visuals + '<details id="practice">', 1)
     page = page.replace('<h3>⑤ 내가 고른 질문으로 그래프 만들고 읽기</h3>', '<h3>⑤ 내가 고른 질문으로 그래프 만들고 읽기</h3><figure><img class="diversity-visual" src="assets/02_axes_workflow.png" alt="질문을 고르고 Orange 산점도에서 가로축·세로축·색을 설정하는 순서"><figcaption>질문에서 그래프 설정으로 이어지는 순서</figcaption></figure>')
     page = page.replace('<h3>Windows · 기본', '<figure><img class="diversity-visual" src="assets/04_capture_checklist.png" alt="결과 화면 캡처에 그래프, 가로축, 세로축, 색 설정이 모두 보여야 한다는 확인표"><figcaption>결과 화면을 저장하기 전 확인</figcaption></figure><h3>Windows · 기본', 1)
-    page = page.replace('CSV를 불러오고 두 도구를 연결하는 기존 실제 화면 시연입니다.', '개정 전 8열 CSV로 불러오기와 두 도구 연결을 촬영한 실제 화면입니다. 새 11열 CSV에서도 조작 순서는 같습니다. 질문과 축은 위 14가지 예시를 보고 직접 고르세요.')
+    page = page.replace('CSV를 불러오고 두 도구를 연결하는 기존 실제 화면 시연입니다.', '개정 전 8열 CSV로 불러오기와 두 도구 연결을 촬영한 실제 화면입니다. 새 11열 CSV에서도 조작 순서는 같습니다. 영상 속 세 위젯은 한 줄에 있어 두 선이 겹쳐 보입니다. 실제 작업은 위 안내 그림처럼 표를 위, 산점도를 아래에 놓으세요. 질문과 축은 위 14가지 예시를 보고 직접 고르세요.')
+    page = page.replace('<p class="small">완성 예시를 보는 목적은 연결과 결과를 이해하는 것입니다.', '<p class="small">다른 컴퓨터에서 완성 예시 OWS를 열면 File 위젯에서 내려받은 같은 번호 CSV를 다시 선택하세요. 이 예시는 개정 전 8열 자료로 만든 연결·조작 시연용입니다. 새 11열 CSV로 자신의 질문을 분석해 작업 파일을 따로 저장하세요.</p><p class="small">완성 예시를 보는 목적은 연결과 결과를 이해하는 것입니다.')
     page = page.replace('경계 사례는 AI가 임의로 0점 처리하지 않고 교사 확인 전까지 보류한다.', '경계 사례는 근거를 다시 확인하여 교사가 판단한다.')
     new_video = '<p><strong>먼저 이 짧은 영상을 보세요.</strong> 질문에 따른 축·색 설정과 현재 11열 CSV 화면을 보여 줍니다. 긴 실제 조작 영상의 8열 화면과 구분해서 확인하세요.</p><video controls preload="metadata" poster="assets/01_question_choices.png"><source src="diversity_addendum.mp4" type="video/mp4"><track kind="captions" src="diversity_addendum.vtt" srclang="ko" label="한국어" default></video><p><a href="diversity_addendum.mp4" download>질문과 현재 자료 확인 영상 내려받기</a></p>'
     page = page.replace('<video id="reference-video"', new_video + '<video id="reference-video"', 1)
@@ -142,10 +158,11 @@ def build_orange() -> None:
     (guide / "index.html").write_text(revise_orange_guide((manual / "index_student.html").read_text()))
     for name in ["학생용_한장안내.pdf", "설문응답_작성가이드.pdf", "학생용_한장안내.md", "설문응답_작성가이드.md"]:
         copy(manual / name, guide / name)
-    for name in ["00_new.png", "csv_video_import.png", "csv_video_connections.png", "csv_video_table.png", "csv_video_result.png", "csv_video_reopened.png"]:
+    for name in ["00_new.png", "csv_video_import.png", "csv_video_table.png", "csv_video_result.png", "csv_video_reopened.png"]:
         copy(manual / "assets" / name, guide / "assets" / name)
+    copy(ROOT / "orange-media" / "file-two-branches.png", guide / "assets" / "file-two-branches.png")
     media = ROOT / "orange-media"
-    copy(media / "manual-student.mp4", guide / "manual.mp4")
+    copy(media / "manual-branch-layout.mp4", guide / "manual.mp4")
     copy(media / "subtitles-student.vtt", guide / "subtitles.vtt")
     for name in ["01_question_choices.png", "02_axes_workflow.png", "03_real_orange_capture.png", "04_capture_checklist.png"]:
         copy(media / name, guide / "assets" / name)
@@ -158,7 +175,14 @@ def build_orange() -> None:
     copy(new_data / "orange-csv-30-v2.zip", guide / "downloads" / "학생배포_CSV_30주제.zip")
     copy(dataset / "학생배포_Excel_원본보관.zip", guide / "downloads" / "학생배포_Excel_원본보관.zip")
     copy(new_data / "orange-csv-30-v2.zip", PUBLIC / "files" / "orange-csv-30.zip")
-    copy(manual / "downloads" / "제출예시" / "CSV_시연_11_로봇.ows", guide / "downloads" / "제출예시" / "CSV_시연_11_로봇.ows")
+    example_ows = guide / "downloads" / "제출예시" / "CSV_시연_11_로봇.ows"
+    copy(manual / "downloads" / "제출예시" / "CSV_시연_11_로봇.ows", example_ows)
+    workflow = example_ows.read_text(encoding="utf-8")
+    for node_id, position in (("0", "(120, 210)"), ("1", "(360, 80)"), ("2", "(360, 340)")):
+        pattern = rf'(<node id="{node_id}"[^>]*position=")[^"]+(" />)'
+        workflow, count = re.subn(pattern, lambda match: match.group(1) + position + match.group(2), workflow, count=1)
+        assert count == 1, f"Orange example is missing widget {node_id}"
+    example_ows.write_text(workflow, encoding="utf-8")
     csv_root = new_data / "CSV"
     rows = []
     for csv in sorted(csv_root.glob("[0-9][0-9]_*.csv")):
@@ -177,15 +201,15 @@ def build_orange() -> None:
         file_item("orange-guide/설문응답_작성가이드.pdf", "답변 작성 가이드 PDF", "일곱 문항과 작성 예시") +
         '</ul>')
     body += section("분석 질문을 먼저 고르세요", question_cards(), "questions")
-    body += section("순서대로 해 보세요", '''<ol class="steps"><li><strong>CSV를 Orange에 불러오기</strong><p>File로 CSV를 열고 Data Table에 연결해 표를 확인합니다.</p></li>
-<li><strong>질문에 맞는 그래프 만들기</strong><p>File에서 Scatter Plot에도 직접 연결합니다. 선택한 질문에 맞춰 가로축·세로축·색을 고릅니다.</p></li>
+    body += section("순서대로 해 보세요", '''<ol class="steps"><li><strong>CSV를 Orange에 불러오기</strong><p>File로 CSV를 읽습니다. Data Table을 오른쪽 위에 두고 File에서 연결하면 행·열·빈칸을 표로 확인할 수 있습니다.</p></li>
+<li><strong>질문에 맞는 그래프 만들기</strong><p>Scatter Plot을 오른쪽 아래에 두고 File에서 직접 연결합니다. 같은 자료가 표와 산점도로 각각 전달됩니다. 선택한 질문에 맞춰 가로축·세로축·색을 고릅니다. <a href="orange-guide/index.html#practice">두 연결의 이유와 배치 그림 보기</a></p></li>
 <li><strong>파일과 화면 저장</strong><p>Orange 작업 파일(.ows), 전체 연결 화면 1장, 주요 결과 화면 1장을 준비합니다. 저장한 .ows를 다시 열어 확인하세요.</p></li>
 <li><strong>일곱 답변 작성</strong><p>결과물, 자료 구성, 연결 이유, 발견한 점과 근거, 진로·학업 도움, 느낀 점, 아쉬움·보완점을 각각 적습니다.</p></li>
 <li><strong>Google 설문으로 제출</strong><p>학번·이름·과제 제목, 일곱 답변과 파일을 차례대로 넣고 접수 완료 화면을 확인합니다.</p></li></ol>''', "steps")
     body += section("제출 전 확인", '''<div class="callout"><strong>제출물</strong><p>.ows 파일 1개 + 전체 연결 화면 1장 + 결과 화면 1장 + 설문 답변 7개</p><p>교사 제공 CSV는 주제 번호만 적습니다. 직접 준비한 자료라면 실제 사용한 CSV·Excel 원본과 출처를 함께 제출하고, Excel의 시트 이름도 적습니다.</p></div>
 <p>30점 = 답변 21점 + 자료 읽기·연결 4점 + 분석 결과 5점. 답변은 문항에 맞는 완결 문장 3개 이상 3점, 2개 2점, 1개 1점, 없으면 0점입니다. 같은 뜻의 반복은 한 번만 셉니다.</p>
 <p>파일 문제로 막히면 준비된 답변과 파일부터 11월 6일 23:59까지 제출하고 교사에게 알리세요. 원래 작업의 누락·손상·경로 문제는 11월 9일 23:59까지 보완할 수 있습니다. 그 기간에 답변 수정이나 새 분석을 추가할 수는 없습니다.</p>''')
-    body += section("실습 영상", '<p>먼저 질문 선택 영상에서 다양한 축을 살펴보세요. 아래 긴 영상은 개정 전 8열 CSV로 촬영한 실제 Orange 조작 예시입니다. 새 자료는 11열이며 질문과 축은 스스로 고릅니다.</p><video controls preload="metadata" width="100%"><source src="orange-guide/question-choices.mp4" type="video/mp4"><track kind="captions" src="orange-guide/question-choices.vtt" srclang="ko" label="한국어" default></video><p>' + link("orange-guide/question-choices.mp4", "질문 선택 영상 받기") + '</p><video controls preload="metadata" width="100%"><source src="orange-guide/manual.mp4" type="video/mp4"><track kind="captions" src="orange-guide/subtitles.vtt" srclang="ko" label="한국어"></video><p>' + link("orange-guide/manual.mp4", "기본 조작 영상 받기") + '</p>')
+    body += section("실습 영상", '<p>먼저 질문 선택 영상에서 다양한 축을 살펴보세요. 아래 긴 영상은 개정 전 8열 CSV로 촬영한 실제 Orange 조작 예시입니다. 영상의 연결 구간에는 위·아래 분기 배치 그림을 함께 보여 줍니다. 새 자료는 11열이며 질문과 축은 스스로 고릅니다.</p><video controls preload="metadata" width="100%"><source src="orange-guide/question-choices.mp4" type="video/mp4"><track kind="captions" src="orange-guide/question-choices.vtt" srclang="ko" label="한국어" default></video><p>' + link("orange-guide/question-choices.mp4", "질문 선택 영상 받기") + '</p><video controls preload="metadata" width="100%" poster="orange-guide/assets/file-two-branches.png"><source src="orange-guide/manual.mp4" type="video/mp4"><track kind="captions" src="orange-guide/subtitles.vtt" srclang="ko" label="한국어"></video><p>' + link("orange-guide/manual.mp4", "기본 조작 영상 받기") + '</p>')
     body += section("주제별 CSV", '<p>하나만 골라도 됩니다. 내려받은 CSV의 내용은 바꾸지 말고 자신의 Orange 작업 파일을 만드세요.</p><ul class="topic-list">' + ''.join(rows) + '</ul>', "topics")
     body += '<div class="submit"><div><h2>이제 제출하세요</h2><p>Google 계정으로 설문을 열고 답변과 파일을 확인한 뒤, 제출 완료 화면까지 보세요.</p></div>' + link(ORANGE_FORM, "1차 제출 설문 열기", "button") + '</div>'
     (PUBLIC / "orange.html").write_text(shell("1차 Orange 수행평가", "orange", body))

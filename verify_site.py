@@ -3,9 +3,11 @@
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
+import ast
 import csv
 import re
 import zipfile
+import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parent / "docs"
 
@@ -69,6 +71,17 @@ def main() -> None:
             failures.append(f"Orange question choices missing: {page}")
         if "question-choices.mp4" not in text and "diversity_addendum.mp4" not in text:
             failures.append(f"Orange diversity video missing: {page}")
+    orange_guide = (ROOT / "orange-guide/index.html").read_text()
+    for phrase in ("왜 두 곳에 연결할까요?", "행 수·열 이름·값과 빈칸", "위쪽 Data Table과 아래쪽 Scatter Plot", "assets/file-two-branches.png"):
+        if phrase not in orange_guide:
+            failures.append(f"Orange branch explanation missing: {phrase}")
+    example = ET.parse(ROOT / "orange-guide/downloads/제출예시/CSV_시연_11_로봇.ows").getroot()
+    nodes = {node.get("id"): node for node in example.find("nodes")}
+    links = {(link.get("source_node_id"), link.get("sink_node_id")) for link in example.find("links")}
+    if links != {("0", "1"), ("0", "2")}:
+        failures.append("Orange example must branch directly from File to both widgets")
+    if not (ast.literal_eval(nodes["1"].get("position"))[1] < ast.literal_eval(nodes["0"].get("position"))[1] < ast.literal_eval(nodes["2"].get("position"))[1]):
+        failures.append("Orange example must place Data Table above File and Scatter Plot below")
     guide = (ROOT / "python-guide/index.html").read_text()
     if '<details id="exercise-code">' not in guide or guide.count('class="notebook-code"') != 4:
         failures.append("Python exercise example is not visible as four inline code blocks")
