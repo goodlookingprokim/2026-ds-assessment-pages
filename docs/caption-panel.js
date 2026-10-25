@@ -1,5 +1,6 @@
 /* Keep instructional screens clear while preserving native captions in fullscreen. */
 document.querySelectorAll('video').forEach((video) => {
+  if (video.hasAttribute('data-captions-burned-in')) return;
   const trackElement = video.querySelector('track[kind="captions"], track[kind="subtitles"]');
   if (!trackElement) return;
 
