@@ -1,0 +1,12 @@
+{
+  "id": "3c8c25a4-45a7-4fac-9732-aae33b419cfa",
+  "profile_id": "4414558b-b6d6-48af-a810-b60c991040a0",
+  "profile_name": "GoodlookingproKim",
+  "text": "오렌지를 실행하고 새 작업을 엽니다. 왼쪽 데이터에서 파일과 데이터 테이블을, 시각화 도구에서 스캐터 플롯을 작업 화면에 놓습니다. 파일 위젯을 두 번 누르고 폴더 버튼으로 십일 번 씨에스브이를 선택하세요. 씨에스브이는 엑셀과 달리 시트를 고르지 않습니다. 백팔십 개 사례가 읽혔는지 확인합니다.",
+  "language": "ko",
+  "status": "completed",
+  "source_generation_id": "3c8c25a4-45a7-4fac-9732-aae33b419cfa",
+  "source_audio": "../outputs/video_csv_20261021/voice/01.wav",
+  "trim_end_seconds": 25.6,
+  "trim_reason": "Remove obsolete eight-column explanation; retain only widget placement and CSV loading narration"
+}

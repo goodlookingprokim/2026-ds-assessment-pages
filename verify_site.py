@@ -119,15 +119,19 @@ def main() -> None:
     voice_source = ROOT.parent / "orange-media/recapture"
     if (ROOT / "orange-guide/assets/file-two-branches.png").read_bytes() != (voice_source / "02-canvas-branch.png").read_bytes():
         failures.append("Orange branch guide must use the genuine current workflow capture")
+    if (ROOT / "orange-guide/assets/csv_video_start.png").read_bytes() != (voice_source / "00f-three-widgets-unconnected.png").read_bytes():
+        failures.append("Orange video poster must show the newly placed, unconnected widgets")
     if (ROOT / "orange-guide/manual.mp4").read_bytes() != (voice_source.parent / "manual-recaptured.mp4").read_bytes():
         failures.append("Orange guide must publish the recaptured video")
     if 'data-captions-burned-in' in (ROOT / "orange-guide/index.html").read_text(encoding="utf-8"):
         failures.append("Orange guide must keep captions below the instructional video")
-    orange_spoken = " ".join(json.loads((voice_source / f"voice_{number}.json").read_text(encoding="utf-8"))["text"] for number in ("02", "03", "04"))
+    orange_spoken = " ".join(json.loads((voice_source / f"voice_{number}.json").read_text(encoding="utf-8"))["text"] for number in ("01", "02", "03", "04"))
     orange_captions = " ".join(text for _, _, text in caption_cues(ROOT / "orange-guide/subtitles.vtt"))
     words = lambda text: re.findall(r"[가-힣A-Za-z0-9]+", text.lower())
     if words(orange_spoken) != words(orange_captions):
         failures.append("Orange subtitles must reproduce the spoken GoodlookingproKim narration")
+    if "여덟 열" in orange_spoken or "새 화면·위젯 배치" not in orange_guide or "CSV 선택" not in orange_guide:
+        failures.append("Orange video introduction must show current CSV loading without obsolete column counts")
     narration = (ROOT / "python-guide/대본.txt").read_text(encoding="utf-8")
     spoken = " ".join(block.split("\n", 1)[1] for block in narration.strip().split("\n\n"))
     captions = " ".join(text for _, _, text in caption_cues(ROOT / "python-guide/자막.vtt"))

@@ -1,9 +1,55 @@
 {
   "source": "Orange 안정화.app actual window captures of the current 11-column CSV",
   "voice_profile_id": "4414558b-b6d6-48af-a810-b60c991040a0",
-  "voicebox_generation": "Existing completed clips; fresh generation failed with missing default metallib",
+  "voicebox_generation": "Existing completed GoodlookingproKim clips; scene 01 trims obsolete eight-column narration; fresh generation failed with missing default metallib",
   "subtitle_basis": "Exact Voicebox text for each reused clip; sentence timing checked against local audio transcription",
   "scenes": [
+    {
+      "scene": "01",
+      "capture": "00f-three-widgets-unconnected.png",
+      "capture_sha256": "b52ebec86fafca16ec8a0f3b87986bf1033418a12ae411d368970cfbf456eaca",
+      "audio_sha256": "7d572c0411230f88e885e08d069e76a7a1b804f9522ee8bbf6511b4bf5120a16",
+      "voice_profile": "GoodlookingproKim",
+      "spoken_text": "오렌지를 실행하고 새 작업을 엽니다. 왼쪽 데이터에서 파일과 데이터 테이블을, 시각화 도구에서 스캐터 플롯을 작업 화면에 놓습니다. 파일 위젯을 두 번 누르고 폴더 버튼으로 십일 번 씨에스브이를 선택하세요. 씨에스브이는 엑셀과 달리 시트를 고르지 않습니다. 백팔십 개 사례가 읽혔는지 확인합니다.",
+      "duration_seconds": 25.6,
+      "stages": [
+        {
+          "capture": "00a-blank-workflow.png",
+          "capture_sha256": "0ca16f955f53066938ff162723693d7a5e581bcc5d0cabc8d56988570c383d3b",
+          "duration_seconds": 3.28
+        },
+        {
+          "capture": "00b-file-placed.png",
+          "capture_sha256": "cf8d27c16265725941c988c1a926f8b01ee8f5c4834a4969194b1ca40f6472f5",
+          "duration_seconds": 2.22
+        },
+        {
+          "capture": "00d-table-upper.png",
+          "capture_sha256": "968ae4c5d6e817e821d9b13a4fa0f0e6a0065f108291a77a82b8bbe3f586d1f0",
+          "duration_seconds": 1.74
+        },
+        {
+          "capture": "00e-scatter-palette.png",
+          "capture_sha256": "0aa6b0cf674ac05215587d6f12caa6ba4ff2ed1f3d9abb7cf4c297aa066d349e",
+          "duration_seconds": 2.54
+        },
+        {
+          "capture": "00f-three-widgets-unconnected.png",
+          "capture_sha256": "b52ebec86fafca16ec8a0f3b87986bf1033418a12ae411d368970cfbf456eaca",
+          "duration_seconds": 4.02
+        },
+        {
+          "capture": "00g-file-chooser-current.png",
+          "capture_sha256": "8fc6bea65a0f4edfcdd2bbe495f70a329f334bac11a9cfe1641193b2b562a504",
+          "duration_seconds": 8.98
+        },
+        {
+          "capture": "00h-file-loaded-11.png",
+          "capture_sha256": "b5e5e8a8b1d5dc453b987fa9d56dba383ac666ac96e34b09c911444ea2f28a13",
+          "duration_seconds": 2.82
+        }
+      ]
+    },
     {
       "scene": "02",
       "capture": "02-canvas-branch.png",
@@ -12,7 +58,7 @@
       "voice_profile": "GoodlookingproKim",
       "spoken_text": "파일 오른쪽 연결점에서 데이터 테이블 왼쪽 연결점까지 끌어서 연결하세요. 파일에서 스캐터 플롯으로도 연결합니다. 두 개의 선이 각각 파일에서 출발해야 합니다. 데이터 테이블은 표를 확인하는 위젯이고, 스캐터 플롯은 두 수치의 관계를 점으로 보여주는 위젯입니다. 화면에 보이는 느낌표가 항상 연결 오류라는 뜻은 아닙니다. 메시지를 열어 내용을 확인하세요.",
       "duration_seconds": 27.2,
-      "connection_stages": [
+      "stages": [
         {
           "capture": "02a-canvas-unconnected.png",
           "capture_sha256": "a1b3f6ff8e24a034d79828e0245dac308b241d097a69a99553eff5c013874cf2",

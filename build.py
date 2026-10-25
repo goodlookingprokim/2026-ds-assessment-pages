@@ -142,20 +142,22 @@ def revise_orange_guide(page: str) -> str:
     page = page.replace('<details id="practice">', question_cards() + visuals + '<details id="practice">', 1)
     page = page.replace('<h3>⑤ 내가 고른 질문으로 그래프 만들고 읽기</h3>', '<h3>⑤ 내가 고른 질문으로 그래프 만들고 읽기</h3><figure><img class="diversity-visual" src="assets/02_axes_workflow.png" alt="질문을 고르고 Orange 산점도에서 가로축·세로축·색을 설정하는 순서"><figcaption>질문에서 그래프 설정으로 이어지는 순서</figcaption></figure>')
     page = page.replace('<h3>Windows · 기본', '<figure><img class="diversity-visual" src="assets/04_capture_checklist.png" alt="결과 화면 캡처에 그래프, 가로축, 세로축, 색 설정이 모두 보여야 한다는 확인표"><figcaption>결과 화면을 저장하기 전 확인</figcaption></figure><h3>Windows · 기본', 1)
-    page = page.replace('CSV를 불러오고 두 도구를 연결하는 기존 실제 화면 시연입니다.', '현재 11열 CSV를 연 실제 Orange 화면에서 File의 두 갈래 연결, Data Table의 표, Scatter Plot의 축과 색을 보여 줍니다. 참여·성과는 조작 예시 한 가지이며 자신의 질문에 맞춰 축과 색을 바꾸세요.')
+    page = page.replace('CSV를 불러오고 두 도구를 연결하는 기존 실제 화면 시연입니다.', '새 작업 화면에서 위젯 세 개를 배치하고 현재 11열 CSV를 불러온 다음, File의 두 갈래 연결, Data Table의 표, Scatter Plot의 축과 색을 보여 줍니다. 참여·성과는 조작 예시 한 가지이며 자신의 질문에 맞춰 축과 색을 바꾸세요.')
     page = page.replace('<p class="small">완성 예시를 보는 목적은 연결과 결과를 이해하는 것입니다.', '<p class="small">다른 컴퓨터에서 완성 예시 OWS를 열면 File 위젯에서 내려받은 같은 번호 CSV를 다시 선택하세요. 자신의 질문으로 분석한 작업 파일은 따로 저장하세요.</p><p class="small">완성 예시를 보는 목적은 연결과 결과를 이해하는 것입니다.')
     page = page.replace('경계 사례는 AI가 임의로 0점 처리하지 않고 교사 확인 전까지 보류한다.', '경계 사례는 근거를 다시 확인하여 교사가 판단한다.')
-    new_video = '<p><strong>먼저 질문 선택 영상을 보세요.</strong> 여러 분석 질문과 현재 11열 CSV를 소개합니다. 이어서 실제 Orange 화면 영상에서 두 갈래 연결과 표·그래프를 확인하세요.</p><video controls preload="metadata" poster="assets/01_question_choices.png"><source src="diversity_addendum.mp4" type="video/mp4"><track kind="captions" src="diversity_addendum.vtt" srclang="ko" label="한국어" default></video><p><a href="diversity_addendum.mp4" download>질문과 현재 자료 확인 영상 내려받기</a></p>'
+    new_video = '<p><strong>먼저 질문 선택 영상을 보세요.</strong> 여러 분석 질문과 현재 11열 CSV를 소개합니다. 이어서 실제 Orange 화면 영상에서 새 화면 열기, 위젯 배치, CSV 불러오기, 두 갈래 연결과 표·그래프를 순서대로 따라 하세요.</p><video controls preload="metadata" poster="assets/01_question_choices.png"><source src="diversity_addendum.mp4" type="video/mp4"><track kind="captions" src="diversity_addendum.vtt" srclang="ko" label="한국어" default></video><p><a href="diversity_addendum.mp4" download>질문과 현재 자료 확인 영상 내려받기</a></p>'
     page = page.replace('<video id="reference-video"', new_video + '<video id="reference-video"', 1)
-    page = page.replace('CSV 조작 참고 영상(10월 21일 촬영)', '현재 11열 CSV를 연 Orange 실제 화면(10월 25일 다시 캡처)')
-    page = page.replace('<div class="actions"><button class="secondary" type="button" data-seek="30">00:30 자료 열기로 이동</button><button class="secondary" type="button" data-seek="65">01:05 도구 연결로 이동</button><button class="secondary" type="button" data-seek="99">01:39 그래프 보기로 이동</button><button class="secondary" type="button" data-seek="135">02:15 저장하기로 이동</button></div>', '<div class="actions"><button class="secondary" type="button" data-seek="0">00:00 두 갈래 연결</button><button class="secondary" type="button" data-seek="27">00:27 표 확인</button><button class="secondary" type="button" data-seek="46">00:46 산점도 확인</button></div>')
+    page = page.replace('CSV 조작 참고 영상(10월 21일 촬영)', '현재 11열 CSV를 연 Orange 실제 화면(10월 26일 시작 단계 보완)')
+    page = page.replace('poster="assets/file-two-branches.png" aria-label="실제 화면으로 보는 CSV Orange 실습"', 'poster="assets/csv_video_start.png" aria-label="새 화면부터 시작하는 CSV Orange 실습"')
+    page = page.replace('<div class="actions"><button class="secondary" type="button" data-seek="30">00:30 자료 열기로 이동</button><button class="secondary" type="button" data-seek="65">01:05 도구 연결로 이동</button><button class="secondary" type="button" data-seek="99">01:39 그래프 보기로 이동</button><button class="secondary" type="button" data-seek="135">02:15 저장하기로 이동</button></div>', '<div class="actions"><button class="secondary" type="button" data-seek="0">00:00 새 화면·위젯 배치</button><button class="secondary" type="button" data-seek="14">00:14 CSV 선택</button><button class="secondary" type="button" data-seek="26">00:26 두 갈래 연결</button><button class="secondary" type="button" data-seek="53">00:53 표 확인</button><button class="secondary" type="button" data-seek="72">01:12 산점도 확인</button></div>')
     media = ROOT / "orange-media"
     for filename in ("manual.mp4", "subtitles.vtt", "diversity_addendum.mp4", "diversity_addendum.vtt"):
         source = media / {"manual.mp4": "manual-recaptured.mp4", "subtitles.vtt": "subtitles-recaptured.vtt"}.get(filename, filename)
         page = re.sub(rf'src="{re.escape(filename)}(?:\?v=[^\"]*)?"',
                       f'src="{filename}?v={media_stamp(source)}"', page)
     recapture = media / "recapture"
-    for source, dest in (("00-file-top.png", "csv_video_import.png"),
+    for source, dest in (("00f-three-widgets-unconnected.png", "csv_video_start.png"),
+                         ("00-file-top.png", "csv_video_import.png"),
                          ("03-table.png", "csv_video_table.png"),
                          ("04-scatter-participation-performance.png", "csv_video_result.png"),
                          ("02-canvas-branch.png", "csv_video_reopened.png"),
@@ -184,6 +186,7 @@ def build_orange() -> None:
     copy(manual / "assets" / "00_new.png", guide / "assets" / "00_new.png")
     recapture = ROOT / "orange-media" / "recapture"
     for source, dest in [
+        ("00f-three-widgets-unconnected.png", "csv_video_start.png"),
         ("00-file-top.png", "csv_video_import.png"),
         ("03-table.png", "csv_video_table.png"),
         ("04-scatter-participation-performance.png", "csv_video_result.png"),
@@ -240,14 +243,14 @@ def build_orange() -> None:
     body += section("제출 전 확인", '''<div class="callout"><strong>제출물</strong><p>.ows 파일 1개 + 전체 연결 화면 1장 + 결과 화면 1장 + 설문 답변 7개</p><p>교사 제공 CSV는 주제 번호만 적습니다. 직접 준비한 자료라면 실제 사용한 CSV·Excel 원본과 출처를 함께 제출하고, Excel의 시트 이름도 적습니다.</p></div>
 <p>30점 = 답변 21점 + 자료 읽기·연결 4점 + 분석 결과 5점. 답변은 문항에 맞는 완결 문장 3개 이상 3점, 2개 2점, 1개 1점, 없으면 0점입니다. 같은 뜻의 반복은 한 번만 셉니다.</p>
 <p>파일 문제로 막히면 준비된 답변과 파일부터 11월 6일 23:59까지 제출하고 교사에게 알리세요. 원래 작업의 누락·손상·경로 문제는 11월 9일 23:59까지 보완할 수 있습니다. 그 기간에 답변 수정이나 새 분석을 추가할 수는 없습니다.</p>''')
-    body += section("실습 영상", '<p>먼저 질문 선택 영상에서 다양한 축을 살펴보세요. 다음 영상은 현재 11열 CSV를 연 실제 Orange 화면에서 File의 두 갈래 연결, 표, 그래프를 보여 줍니다. 참여·성과는 조작 예시 한 가지이므로 자신의 질문에 맞춰 축과 색을 바꾸세요.</p><video controls preload="metadata" width="100%"><source src="orange-guide/question-choices.mp4" type="video/mp4"><track kind="captions" src="orange-guide/question-choices.vtt" srclang="ko" label="한국어" default></video><p>' + link("orange-guide/question-choices.mp4", "질문 선택 영상 받기") + '</p><video controls preload="metadata" width="100%" poster="orange-guide/assets/file-two-branches.png"><source src="orange-guide/manual.mp4" type="video/mp4"><track kind="captions" src="orange-guide/subtitles.vtt" srclang="ko" label="한국어" default></video><p>' + link("orange-guide/manual.mp4", "기본 조작 영상 받기") + '</p>')
+    body += section("실습 영상", '<p>먼저 질문 선택 영상에서 다양한 축을 살펴보세요. 다음 영상은 새 작업 화면에서 위젯을 배치하고 현재 11열 CSV를 불러온 뒤 File의 두 갈래 연결, 표, 그래프를 순서대로 보여 줍니다. 참여·성과는 조작 예시 한 가지이므로 자신의 질문에 맞춰 축과 색을 바꾸세요.</p><video controls preload="metadata" width="100%"><source src="orange-guide/question-choices.mp4" type="video/mp4"><track kind="captions" src="orange-guide/question-choices.vtt" srclang="ko" label="한국어" default></video><p>' + link("orange-guide/question-choices.mp4", "질문 선택 영상 받기") + '</p><video controls preload="metadata" width="100%" poster="orange-guide/assets/csv_video_start.png"><source src="orange-guide/manual.mp4" type="video/mp4"><track kind="captions" src="orange-guide/subtitles.vtt" srclang="ko" label="한국어" default></video><p>' + link("orange-guide/manual.mp4", "기본 조작 영상 받기") + '</p>')
     body += section("주제별 CSV", '<p>하나만 골라도 됩니다. 내려받은 CSV의 내용은 바꾸지 말고 자신의 Orange 작업 파일을 만드세요.</p><ul class="topic-list">' + ''.join(rows) + '</ul>', "topics")
     body += '<div class="submit"><div><h2>이제 제출하세요</h2><p>Google 계정으로 설문을 열고 답변과 파일을 확인한 뒤, 제출 완료 화면까지 보세요.</p></div>' + link(ORANGE_FORM, "1차 제출 설문 열기", "button") + '</div>'
     for filename, source in (("manual.mp4", media / "manual-recaptured.mp4"),
                              ("subtitles.vtt", media / "subtitles-recaptured.vtt"),
                              ("question-choices.mp4", media / "diversity_addendum.mp4"),
                              ("question-choices.vtt", media / "diversity_addendum.vtt"),
-                             ("assets/file-two-branches.png", recapture / "02-canvas-branch.png")):
+                             ("assets/csv_video_start.png", recapture / "00f-three-widgets-unconnected.png")):
         body = body.replace(f'"orange-guide/{filename}"',
                             f'"orange-guide/{filename}?v={media_stamp(source)}"')
     (PUBLIC / "orange.html").write_text(shell("1차 Orange 수행평가", "orange", body))
