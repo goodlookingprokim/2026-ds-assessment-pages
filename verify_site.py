@@ -48,8 +48,13 @@ def main() -> None:
     for page in ROOT.rglob("*.html"):
         text = page.read_text(encoding="utf-8")
         nav = re.search(r'<nav class="global-nav".*?</nav>', text, re.S)
-        if not nav or any(target not in nav.group(0) for target in ('index.html', 'orange.html', 'orange-guide/index.html', 'python.html', 'python-guide/index.html')):
+        if not nav or any(target not in nav.group(0) for target in ('index.html', 'practice.html', 'orange.html', 'orange-guide/index.html', 'python.html', 'python-guide/index.html')):
             failures.append(f"Incomplete global navigation: {page.relative_to(ROOT)}")
+        notice = re.search(r'<aside class="login-notice".*?</aside>', text, re.S)
+        if not notice or "반드시 본인의 개인 Google 계정으로 로그인하세요" not in notice.group(0) or notice.start() > text.index("<h1"):
+            failures.append(f"Missing top personal-account login notice: {page.relative_to(ROOT)}")
+        if "PRACTICE_FORM_URL_PENDING" in text:
+            failures.append(f"Unpublished practice form URL: {page.relative_to(ROOT)}")
         visible = re.sub(r"<style.*?</style>|<script.*?</script>", " ", text, flags=re.I | re.S)
         visible = re.sub(r"<[^>]+>", " ", visible)
         for phrase in (r"인공지능.{0,24}(?:평가|채점)", r"(?<![A-Za-z])AI(?![A-Za-z]).{0,24}(?:평가|채점)", r"(?:평가|채점).{0,24}(?<![A-Za-z])AI(?![A-Za-z])"):
@@ -83,6 +88,17 @@ def main() -> None:
     for page in ("orange.html", "python.html"):
         if "docs.google.com/forms/d/e/" not in (ROOT / page).read_text():
             failures.append(f"Missing submission form: {page}")
+    practice = (ROOT / "practice.html").read_text(encoding="utf-8")
+    practice_forms = set(re.findall(r'https://docs\.google\.com/forms/[^"<> ]+', practice))
+    assessed_forms = set(re.findall(r'https://docs\.google\.com/forms/[^"<> ]+', (ROOT / "orange.html").read_text() + (ROOT / "python.html").read_text())) - practice_forms
+    if len(practice_forms) != 1 or len(assessed_forms) != 2:
+        failures.append("Practice must link to one separate form and preserve both assessed submission forms")
+    for phrase in ("파일 추가", "업로드", "파일 이름", "파일 제출 연습이 완료되었습니다.", "여러 번", "성적에 반영되지", "로그아웃", "10MB 이하"):
+        if phrase not in practice:
+            failures.append(f"Missing practice instruction: {phrase}")
+    sample = ROOT / "files/upload-practice.txt"
+    if not sample.is_file() or not 0 < sample.stat().st_size < 10000:
+        failures.append("Practice download must be a small, nonempty text file")
     for page in ("orange.html", "orange-guide/index.html"):
         text = (ROOT / page).read_text()
         if len(re.findall(r'<li><strong>\d+\. .*?</strong><span>가로축', text)) < 14:
@@ -141,7 +157,7 @@ def main() -> None:
         failures.append("Python captions must reproduce the spoken narration, not the slide summaries")
     if failures:
         raise SystemExit("\n".join(failures))
-    print(f"PASS: {len(list(ROOT.rglob('*.html')))} HTML pages, {count} local references, 30 individual CSV files, 2 submission forms")
+    print(f"PASS: {len(list(ROOT.rglob('*.html')))} HTML pages, {count} local references, 30 individual CSV files, 2 submission forms, 1 practice form")
 
 
 if __name__ == "__main__":

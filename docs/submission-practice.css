@@ -1,0 +1,17 @@
+.login-notice{box-sizing:border-box;margin:0;background:#fff4cd;color:#293220;border-bottom:2px solid #9c7922;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;font-size:16px;line-height:1.6}
+.login-notice-inner{width:min(100% - 40px,1040px);margin:auto;padding:15px 0}
+.login-notice p{margin:0 0 5px;max-width:none}
+.login-notice p:first-child{font-size:19px;line-height:1.5}
+.login-required{display:inline-block;margin-right:4px;padding:1px 7px;border-radius:4px;background:#4c3510;color:#fff;font-weight:800;font-size:15px;vertical-align:2px}
+.login-notice a{color:#174c80;text-decoration:underline;text-underline-offset:3px;font-weight:750}
+.login-notice a:hover{color:#145c4c}
+.login-notice a:focus-visible{outline:3px solid #145c4c;outline-offset:3px}
+.login-notice-links{display:flex;flex-wrap:wrap;gap:5px 8px}
+.practice-actions{display:flex;flex-wrap:wrap;gap:12px;margin:20px 0 12px}
+.practice-actions .button{white-space:normal}
+.practice-small{font-size:15px;color:#4d625b}
+.practice-steps{grid-template-columns:1fr}
+.practice-steps li{padding-bottom:22px}
+.practice-help dt{font-weight:800;margin-top:22px}
+.practice-help dd{margin:6px 0 0;max-width:790px}
+@media(max-width:700px){.login-notice-inner{width:calc(100% - 28px);padding:12px 0}.login-notice{font-size:15px}.login-notice p:first-child{font-size:17px}.practice-actions .button{width:100%;text-align:center}}

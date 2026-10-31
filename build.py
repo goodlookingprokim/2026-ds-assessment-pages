@@ -18,6 +18,7 @@ def media_stamp(path: Path) -> str:
 
 ORANGE_FORM = "https://docs.google.com/forms/d/e/1FAIpQLSel8D22f8y8r0tWJYpux0EIqAKeGsD56wiYdUVHdgLPBNUaJA/viewform"
 PYTHON_FORM = "https://docs.google.com/forms/d/e/1FAIpQLSdb_FYb6h-rQgikGn8_F4y0rpf1DCMkWUvg1huvRV6fmeYClA/viewform"
+PRACTICE_FORM = "https://docs.google.com/forms/d/e/1FAIpQLScZOqpPs9S-6z6NNaMuyRPG4v95KnQXw4QXtG5yP9WdSp2YLQ/viewform"
 
 
 def copy(source: Path, dest: Path) -> None:
@@ -27,12 +28,12 @@ def copy(source: Path, dest: Path) -> None:
 
 def link(url: str, label: str, css: str = "") -> str:
     external = url.startswith("https://")
-    attrs = ' target="_blank" rel="noopener noreferrer"' if external else (' download' if Path(url.split('#')[0]).suffix.lower() in {'.csv', '.zip', '.ipynb', '.pdf', '.mp4', '.ows'} else '')
+    attrs = ' target="_blank" rel="noopener noreferrer"' if external else (' download' if Path(url.split('#')[0]).suffix.lower() in {'.csv', '.zip', '.ipynb', '.pdf', '.mp4', '.ows', '.txt'} else '')
     return f'<a class="{css}" href="{escape(url, quote=True)}"{attrs}>{escape(label)}</a>'
 
 
 def global_nav(active: str, prefix: str = "") -> str:
-    items = [("home", "메인", "index.html"), ("orange", "1차 안내", "orange.html"), ("orange-guide", "1차 실습", "orange-guide/index.html"), ("python", "2차 안내", "python.html"), ("python-guide", "2차 실습", "python-guide/index.html")]
+    items = [("home", "메인", "index.html"), ("practice", "연습 제출", "practice.html"), ("orange", "1차 안내", "orange.html"), ("orange-guide", "1차 실습", "orange-guide/index.html"), ("python", "2차 안내", "python.html"), ("python-guide", "2차 실습", "python-guide/index.html")]
     links = ""
     for key, label, path in items:
         current = ' aria-current="page"' if key == active else ""
@@ -40,13 +41,22 @@ def global_nav(active: str, prefix: str = "") -> str:
     return f'<nav class="global-nav" aria-label="전체 페이지 빠른 이동">{links}</nav>'
 
 
+def login_notice(prefix: str = "") -> str:
+    return ('<aside class="login-notice" aria-label="제출 전 필수 안내"><div class="login-notice-inner">'
+        '<p><span class="login-required">필수</span> <strong>파일 제출을 위해 반드시 본인의 개인 Google 계정으로 로그인하세요.</strong></p>'
+        '<p>1차·2차 제출과 연습 설문 모두 로그인이 필요합니다. 설문에 표시된 이메일이 내 계정인지 확인하세요.</p>'
+        '<div class="login-notice-links">' + link(prefix + "practice.html", "처음이라면 파일 제출 연습부터 →") + ' · ' +
+        link(PRACTICE_FORM, "연습용 Google 설문 열기") + '</div></div></aside>')
+
+
 def shell(title: str, active: str, body: str) -> str:
     caption_assets = f'<link rel="stylesheet" href="caption-panel.css"><script src="caption-panel.js?v={CAPTION_SCRIPT_VERSION}" defer></script>' if '<video' in body else ''
     return f'''<!doctype html>
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="2026 데이터과학 수행평가 학생 안내와 실습 자료">
-<title>{escape(title)} · 2026 데이터과학</title><link rel="stylesheet" href="styles.css">{caption_assets}</head>
+<title>{escape(title)} · 2026 데이터과학</title><link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="submission-practice.css">{caption_assets}</head>
 <body><a class="skip" href="#content">본문으로 바로 가기</a>
+{login_notice()}
 <header class="site-header"><div class="wrap header-inner"><a class="brand" href="index.html">2026 데이터과학 <span>수행평가 안내</span></a>
 {global_nav(active)}</div></header>
 <main class="wrap" id="content">{body}</main><footer class="wrap footer">{global_nav(active)}<p>고2 6·7·8·9반 · 자료와 제출 방법은 이 페이지에서 확인하세요. 제출은 Google 로그인이 필요합니다.</p></footer>
@@ -55,11 +65,11 @@ def shell(title: str, active: str, body: str) -> str:
 
 def add_guide_nav(page: str, active: str, previous: str, next_page: str) -> str:
     nav = '<div class="assessment-nav"><div class="assessment-nav-inner">' + global_nav(active, "../") + f'<div class="assessment-neighbors"><a href="../{previous}">← 이전 페이지</a><a href="../{next_page}">다음 페이지 →</a></div></div></div>'
-    page = page.replace('<body>', '<body>' + nav, 1)
+    page = page.replace('<body>', '<body>' + login_notice("../") + nav, 1)
     css = '<style>.assessment-nav{position:sticky;top:0;z-index:100;background:#fff;border-bottom:2px solid #145c4c;box-shadow:0 3px 10px #0001}.assessment-nav-inner{max-width:1050px;margin:auto;padding:8px 16px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}.assessment-nav .global-nav{display:flex;flex-wrap:wrap;gap:4px}.assessment-nav a{display:inline-block;padding:7px 10px;border-radius:6px;color:#173d33;text-decoration:none;font-size:14px;font-weight:700}.assessment-nav a:hover,.assessment-nav a[aria-current=page]{background:#c5e8da}.assessment-neighbors{display:flex;gap:4px}.question-choices{padding:18px;background:#eaf3ef;border:1px solid #cbd8d1;border-radius:12px;margin:20px 0}.question-choices ol{list-style:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:0}.question-choices li{background:#fff;padding:11px;border-radius:7px;border:1px solid #cbd8d1}.question-choices li strong,.question-choices li span{display:block}.question-choices li span{font-size:13px}.question-choices code{white-space:nowrap}.diversity-visual{max-width:100%}@media(max-width:600px){.assessment-nav-inner{padding:4px 8px}.assessment-nav a{font-size:12px;padding:6px}.assessment-neighbors{width:100%;justify-content:space-between}.question-choices ol{grid-template-columns:1fr}}</style>'
     if active == "orange-guide":
         css = css.replace("</style>", ".branch-layout{width:min(100%,572px);margin-inline:auto}.branch-layout img{width:100%}</style>", 1)
-    assets = f'<link rel="stylesheet" href="../caption-panel.css"><script src="../caption-panel.js?v={CAPTION_SCRIPT_VERSION}" defer></script>'
+    assets = f'<link rel="stylesheet" href="../submission-practice.css"><link rel="stylesheet" href="../caption-panel.css"><script src="../caption-panel.js?v={CAPTION_SCRIPT_VERSION}" defer></script>'
     return page.replace('</head>', css + assets + '</head>', 1)
 
 
@@ -315,10 +325,39 @@ def build_python() -> None:
 
 def build_index() -> None:
     body = '''<div class="hero index-hero"><h1>2026 데이터과학<br>수행평가 안내</h1><p class="lead">1차와 2차 안내, 실습 자료, 제출 순서를 한곳에서 확인하세요.</p></div>
+<section class="section"><h2>처음 제출한다면 먼저 연습하세요</h2><p>개인 Google 계정 로그인부터 파일 첨부, 제출 완료 화면 확인까지 연습합니다. 연습은 성적에 반영되지 않으며, 실제 수행평가는 아래 1차·2차 설문에 따로 제출합니다.</p><a class="button" href="practice.html">파일 제출 연습과 사용 방법 →</a></section>
 <div class="choice-grid"><a class="choice" href="orange.html"><span>1차 · Orange</span><h2>자료 하나로 그래프 하나 만들기</h2><p>11월 2~6일 · 11월 6일 23:59 제출</p><strong>안내와 자료 보기 →</strong></a>
 <a class="choice" href="python.html"><span>2차 · Python</span><h2>내 자료로 계산·표·그래프 만들기</h2><p>11월 9~13일 · 제출 마감 확정 후 안내</p><strong>안내와 자료 보기 →</strong></a></div>
 <section class="section"><h2>제출 순서</h2><p>각 페이지에서 필요한 파일을 받고 실습 방법을 익힌 뒤, 해당 Google 설문에 일곱 답변과 파일을 차례대로 넣습니다. 마지막 접수 완료 화면까지 확인하세요.</p></section>'''
     (PUBLIC / "index.html").write_text(shell("수행평가 안내", "", body))
+
+
+def build_practice() -> None:
+    if not PRACTICE_FORM.startswith("https://docs.google.com/forms/"):
+        raise ValueError("Publish the practice form and set its verified responder URL before building")
+    copy(ROOT / "practice-files" / "upload-practice.txt", PUBLIC / "files" / "upload-practice.txt")
+    body = '''<div class="hero"><p class="number">1차·2차 공통 준비</p><h1>파일 제출을<br>먼저 연습해요</h1><p class="lead">내 Google 계정으로 로그인하고, 작은 파일 하나를 첨부해 제출 완료 화면까지 확인합니다.</p></div>
+<div class="route">연습 파일 받기 <span>→</span> 개인 계정 로그인 <span>→</span> 파일 첨부 <span>→</span> 제출 완료 확인</div>
+<div class="callout"><strong>이 설문은 연습용입니다.</strong><p>성적에 반영되지 않으며 여러 번 연습할 수 있습니다. 연습을 마쳐도 1차·2차 수행평가 제출이 완료되는 것은 아닙니다. 실제 과제는 각 안내 페이지의 제출 설문으로 내세요.</p></div>'''
+    body += section("준비물은 두 가지예요", '<ul><li>본인이 사용할 수 있는 <strong>개인 Google 계정</strong></li><li>아래에서 내려받는 작은 연습 파일 1개</li></ul><p>연습 파일에 이름·학번·사진·과제 내용을 넣지 않아도 됩니다. 파일 내용을 고칠 필요도 없습니다.</p><p>파일을 업로드하고 제출하면 Google 계정의 이름·이메일·프로필 사진이 자동으로 기록됩니다.</p><div class="practice-actions">' + link("files/upload-practice.txt", "① 연습 파일 받기 (.txt)", "button") + link(PRACTICE_FORM, "② 연습 설문 열기 ↗", "button") + '</div><p class="practice-small">설문은 새 탭에서 열립니다. 이 안내를 옆에 두고 차례대로 따라 하세요.</p>')
+    body += section("처음부터 차례대로 따라 하세요", '''<ol class="steps practice-steps">
+<li><strong>연습 파일을 내려받아요</strong><p>위의 <b>① 연습 파일 받기</b>를 누릅니다. 보통 컴퓨터의 <b>다운로드</b> 폴더에 <code>upload-practice.txt</code>가 저장됩니다. 저장 위치와 파일 이름을 확인하세요.</p></li>
+<li><strong>내 개인 Google 계정으로 로그인해요</strong><p><b>② 연습 설문 열기</b>를 누릅니다. 로그인 화면이 나오면 내 개인 Google 계정으로 로그인합니다. 친구·교사·공용 계정을 사용하지 마세요. 비밀번호는 설문 문항에 적지 않습니다.</p></li>
+<li><strong>설문에 표시된 계정을 확인해요</strong><p>설문 위쪽 이메일이 내 계정인지 확인합니다. 다른 사람의 계정이면 <b>계정 전환</b>을 눌러 내 계정으로 바꾸세요. <b>연습 별명</b>은 선택 문항이며, 쓰고 싶으면 <b>연습01</b>처럼 적으면 됩니다.</p></li>
+<li><strong>파일을 선택하고 업로드해요</strong><p>파일 첨부 문항에서 <b>파일 추가</b>를 누릅니다. <b>업로드 → 찾아보기(Browse)</b> 또는 파일 선택 버튼을 눌러 다운로드 폴더의 <code>upload-practice.txt</code>를 선택하세요. 파일을 고르면 업로드가 시작됩니다. 별도로 <b>업로드</b> 버튼이 보이면 누르세요. 업로드가 끝나고 설문지에 파일명이 나타날 때까지 기다립니다.</p></li>
+<li><strong>첨부한 파일 이름을 확인해요</strong><p>설문 문항 안에 <code>upload-practice.txt</code>가 표시되는지 확인합니다. 잘못 고른 파일이면 옆의 삭제 버튼으로 지운 뒤 다시 첨부하세요. 파일 이름이 보이면 <b>제출 전 확인</b> 문항에서 <b>내 개인 Google 계정으로 로그인했고, 올린 파일명을 확인했습니다.</b>에 체크합니다.</p></li>
+<li><strong>제출 버튼을 누르고 완료 화면을 확인해요</strong><p>맨 아래 <b>제출</b>을 누릅니다. <b>파일 제출 연습이 완료되었습니다.</b>라는 안내가 나타나면 성공입니다. 파일 첨부만 하고 창을 닫으면 제출되지 않습니다.</p></li>
+</ol>''', "how-to")
+    body += section("막히면 여기부터 확인하세요", '''<dl class="practice-help">
+<dt>다른 사람의 이메일이 표시돼요.</dt><dd>설문 위쪽의 <b>계정 전환</b>을 누르세요. 여러 계정이 있으면 본인의 개인 계정을 선택한 뒤 표시된 이메일을 다시 확인합니다.</dd>
+<dt>계정이 없거나 로그인할 수 없어요.</dt><dd>제출 마감 전에 교사에게 알려 도움을 받으세요. 다른 사람의 계정을 빌려서 제출하지 않습니다.</dd>
+<dt>파일이 어디 있는지 모르겠어요.</dt><dd>다운로드 폴더에서 <code>upload-practice.txt</code>를 찾으세요. 없으면 이 페이지에서 연습 파일을 다시 받습니다.</dd>
+<dt>업로드가 안 되거나 파일이 너무 크다고 해요.</dt><dd>연습 설문에는 <b>파일 1개, 10MB 이하</b>를 첨부합니다. 여기서 제공한 작은 .txt 파일을 고르고 업로드가 끝날 때까지 기다리세요. 인터넷 연결과 내 계정 로그인 상태도 확인합니다.</dd>
+<dt>권한이 없다는 화면이 나와요.</dt><dd>개인 Google 계정으로 로그인했는지 확인합니다. 계속 막히면 오류 문구를 교사에게 보여 주세요.</dd>
+<dt>제출 버튼을 눌러도 다음 화면으로 넘어가지 않아요.</dt><dd>빨간색으로 표시된 필수 문항을 확인하세요. 파일 첨부와 확인 체크를 마친 뒤 다시 제출합니다.</dd>
+</dl>''')
+    body += section("연습을 마쳤다면", '''<ul><li>내 계정으로 로그인했다.</li><li>설문 안에서 첨부한 파일 이름을 확인했다.</li><li>제출 버튼을 누르고 접수 완료 화면을 확인했다.</li></ul><p>공용 컴퓨터에서는 사용을 마친 뒤 <strong>Google 계정에서 로그아웃</strong>하세요. 창을 닫는 것만으로 로그아웃되는 것은 아닙니다.</p><p>이제 실제 과제의 안내에 따라 제출물을 준비하세요. 1차는 .ows와 화면 캡처, 2차는 실행 결과가 저장된 .ipynb를 제출합니다.</p><div class="practice-actions"><a class="button" href="orange.html">1차 안내로 이동</a><a class="button" href="python.html">2차 안내로 이동</a></div>''')
+    (PUBLIC / "practice.html").write_text(shell("Google 로그인·파일 제출 연습", "practice", body), encoding="utf-8")
 
 
 def version_caption_tracks() -> None:
@@ -339,13 +378,17 @@ def version_caption_tracks() -> None:
 
 
 def main() -> None:
+    if not PRACTICE_FORM.startswith("https://docs.google.com/forms/"):
+        raise ValueError("Set the verified practice form URL before building the public pages")
     PUBLIC.mkdir(exist_ok=True)
     (PUBLIC / ".nojekyll").touch()
     copy(ROOT / "caption-panel.css", PUBLIC / "caption-panel.css")
     copy(ROOT / "caption-panel.js", PUBLIC / "caption-panel.js")
+    copy(ROOT / "submission-practice.css", PUBLIC / "submission-practice.css")
     build_orange()
     build_python()
     build_index()
+    build_practice()
     version_caption_tracks()
 
 
