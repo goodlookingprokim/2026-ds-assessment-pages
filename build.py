@@ -302,7 +302,7 @@ def build_python() -> None:
         copy(png, guide / "images" / png.name)
     body = '''<div class="hero"><p class="number">2차 수행평가 · Python</p><h1>내 자료로<br>계산·표·그래프 만들기</h1>
 <p class="lead">예시 노트북을 내 주제와 자료에 맞게 바꾸고, 실행 결과를 저장해 설명합니다.</p>
-<div class="date"><strong>평가 11월 9~13일</strong><strong>제출 마감 미정 · 확정 후 안내</strong></div></div>
+<div class="date"><strong>평가 11월 9~13일</strong><strong>제출 마감 2026년 11월 13일까지</strong></div></div>
 <div class="route">예시 받기 <span>→</span> 내 자료로 바꾸기 <span>→</span> 모두 실행 <span>→</span> .ipynb 저장 <span>→</span> 답변·파일 제출</div>'''
     body += section("먼저 받을 자료", '<p>아래 파일은 이 페이지에서 바로 받을 수 있습니다. 예시 노트북의 <strong>★ 1. 내 자료</strong> 셀부터 바꾸세요. 예시 코드는 그대로 사용해도 됩니다.</p><ul class="resource-list">' +
         file_item("python-guide/기본예시_축제.ipynb", "축제 기본 예시 노트북", "Google Colab에서 업로드해 사본 저장") +
@@ -317,7 +317,7 @@ def build_python() -> None:
     body += section("제출 전 확인", '''<div class="callout"><strong>제출물</strong><p>실행 결과가 저장된 .ipynb 파일 1개(10MB 이하) + 설문 답변 7개</p><p>필요한 숫자는 노트북 안에 넣습니다. 별도 CSV·Excel·화면 캡처·수정 일지는 필수가 아닙니다.</p></div>
 <p>답변 7개에는 자료·결과 소개, 어려움, 바꾼 부분과 달라진 결과, 코드 한 부분의 역할, 활용하고 싶은 곳, 배운 점, 다음 보완점을 적습니다.</p>
 <p>30점 = 답변 21점 + NumPy·pandas·Matplotlib 활용과 실행 9점. 답변은 문항에 맞는 완결 문장 3개 이상 3점, 2개 2점, 1개 1점, 없으면 0점입니다. 기본정보는 무배점입니다.</p>
-<p>실행이 막히면 이름과 숫자의 개수, 쉼표·따옴표·대괄호를 확인하고 다시 모두 실행하세요. 제출 마감은 확정 후 이 페이지와 설문에 안내됩니다.</p>''')
+<p>실행이 막히면 이름과 숫자의 개수, 쉼표·따옴표·대괄호를 확인하고 다시 모두 실행하세요. 제출 마감은 2026년 11월 13일까지입니다.</p>''')
     body += section("실습 영상", '<video controls preload="metadata" width="100%"><source src="python-guide/쉬운_동영상_매뉴얼.mp4" type="video/mp4"><track kind="captions" src="python-guide/자막.vtt" srclang="ko" label="한국어" default></video><p>' + link("python-guide/쉬운_동영상_매뉴얼.mp4", "영상 파일 받기") + '</p>')
     body += '<div class="submit"><div><h2>이제 제출하세요</h2><p>실행 결과가 들어 있는 .ipynb 파일을 첨부하고 일곱 답변을 작성하세요.</p></div>' + link(PYTHON_FORM, "2차 제출 설문 열기", "button") + '</div>'
     (PUBLIC / "python.html").write_text(shell("2차 Python 수행평가", "python", body))
@@ -327,7 +327,7 @@ def build_index() -> None:
     body = '''<div class="hero index-hero"><h1>2026 데이터과학<br>수행평가 안내</h1><p class="lead">1차와 2차 안내, 실습 자료, 제출 순서를 한곳에서 확인하세요.</p></div>
 <section class="section"><h2>처음 제출한다면 먼저 연습하세요</h2><p>개인 Google 계정 로그인부터 파일 첨부, 제출 완료 화면 확인까지 연습합니다. 연습은 성적에 반영되지 않으며, 실제 수행평가는 아래 1차·2차 설문에 따로 제출합니다.</p><a class="button" href="practice.html">파일 제출 연습과 사용 방법 →</a></section>
 <div class="choice-grid"><a class="choice" href="orange.html"><span>1차 · Orange</span><h2>자료 하나로 그래프 하나 만들기</h2><p>11월 2~6일 · 11월 6일 23:59 제출</p><strong>안내와 자료 보기 →</strong></a>
-<a class="choice" href="python.html"><span>2차 · Python</span><h2>내 자료로 계산·표·그래프 만들기</h2><p>11월 9~13일 · 제출 마감 확정 후 안내</p><strong>안내와 자료 보기 →</strong></a></div>
+<a class="choice" href="python.html"><span>2차 · Python</span><h2>내 자료로 계산·표·그래프 만들기</h2><p>11월 9~13일 · 제출 마감 2026년 11월 13일까지</p><strong>안내와 자료 보기 →</strong></a></div>
 <section class="section"><h2>제출 순서</h2><p>각 페이지에서 필요한 파일을 받고 실습 방법을 익힌 뒤, 해당 Google 설문에 일곱 답변과 파일을 차례대로 넣습니다. 마지막 접수 완료 화면까지 확인하세요.</p></section>'''
     (PUBLIC / "index.html").write_text(shell("수행평가 안내", "", body))
 
