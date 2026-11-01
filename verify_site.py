@@ -66,7 +66,7 @@ def main() -> None:
         )):
             failures.append(f"Missing one-submission / lowest-total policy or practice exception: {page.relative_to(ROOT)}")
         if page.name != "practice.html":
-            for obsolete in ("답부터", "자료부터 제출", "파일 보완 필요", "응답 수정 링크", "제출한 뒤 고쳤다면"):
+            for obsolete in ("답부터", "자료부터 제출", "파일 보완 필요", "응답 수정 링크", "제출한 뒤 고쳤다면", "최신 유효 응답", "준비된 답변과 파일을 마감일까지 제출"):
                 if obsolete in text:
                     failures.append(f"Obsolete partial/repeat submission guidance: {page.relative_to(ROOT)} ({obsolete})")
         policy = re.search(r'<aside class="example-policy".*?</aside>', text, re.S)
