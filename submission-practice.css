@@ -39,6 +39,9 @@
 .practice-checklist code{white-space:normal;overflow-wrap:anywhere}
 .practice-steps{grid-template-columns:1fr}
 .practice-steps li{padding-bottom:22px}
+.practice-steps ul{margin:12px 0;padding-left:22px}
+.practice-steps ul li{counter-increment:none;border:0;border-radius:0;padding:4px 0;background:transparent}
+.practice-steps ul li::before{content:none}
 .practice-help dt{font-weight:800;margin-top:22px}
 .practice-help dd{margin:6px 0 0;max-width:790px}
 @media(max-width:700px){.login-notice-inner{width:calc(100% - 28px);padding:12px 0}.login-notice{font-size:15px}.login-notice .submission-notice-title{font-size:18px}.submission-rules{grid-template-columns:1fr;gap:10px}.submission-rule{padding:12px}.submission-rule>strong{font-size:19px}.practice-actions .button{width:100%;text-align:center}}
