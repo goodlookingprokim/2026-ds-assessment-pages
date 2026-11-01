@@ -21,6 +21,8 @@ ORANGE_FORM = "https://docs.google.com/forms/d/e/1FAIpQLSel8D22f8y8r0tWJYpux0EIq
 PYTHON_FORM = "https://docs.google.com/forms/d/e/1FAIpQLSdb_FYb6h-rQgikGn8_F4y0rpf1DCMkWUvg1huvRV6fmeYClA/viewform"
 PRACTICE_FORM = "https://docs.google.com/forms/d/e/1FAIpQLScZOqpPs9S-6z6NNaMuyRPG4v95KnQXw4QXtG5yP9WdSp2YLQ/viewform"
 EXAMPLE_SUBMISSION_RULE = "제공된 예시자료를 그대로 제출하면 해당 수행평가를 0점 처리합니다."
+ONE_SUBMISSION_RULE = "실제 수행평가 제출은 차수별 1회만 허용합니다."
+DUPLICATE_SUBMISSION_RULE = "같은 수행평가를 2회 이상 제출하면, 모든 제출 내용을 각각 채점한 뒤 가장 낮은 총점을 받은 제출물을 기준으로 최종 점수를 산정합니다."
 
 
 def copy(source: Path, dest: Path) -> None:
@@ -52,6 +54,11 @@ def login_notice(prefix: str = "") -> str:
         '<p>파일 이름 맨 앞에 <b>본인의 학번과 이름</b>을 적으세요. 여러 파일은 뒤에 내용을 덧붙이고, <b>확장자는 그대로</b> 유지합니다.</p>'
         '<p class="submission-name-example">예: <code>20601_홍길동.ows</code> · <code>20601_홍길동_연결화면.png</code> · <code>20601_홍길동.ipynb</code></p>'
         '</div></div><p class="submission-scope">1차·2차 수행평가와 연습 제출 모두 적용합니다. 예시의 학번·이름은 본인의 것으로 바꾸세요.</p>'
+        '<div class="single-submission-notice" role="note" aria-label="실제 수행평가 제출 횟수와 중복 제출 채점 규정">'
+        f'<strong>{ONE_SUBMISSION_RULE}</strong>'
+        '<p><b>1차 1회 · 2차 1회.</b> 답변과 첨부파일을 모두 준비하고 최종 점검한 뒤 제출하세요. 아쉬운 점을 보완·수정하기 위한 재제출도 허용하지 않습니다.</p>'
+        f'<p><b>{DUPLICATE_SUBMISSION_RULE}</b></p>'
+        '<p class="submission-practice-exception">횟수 제한 없이 반복할 수 있는 것은 <b>연습용 설문만</b>입니다. 이 채점 규정은 실제 1차·2차 수행평가에 적용합니다.</p></div>'
         '<div class="login-notice-links">' + link(prefix + "practice.html", "처음이라면 파일 제출 연습부터 →") + ' · ' +
         link(PRACTICE_FORM, "연습용 Google 설문 열기") + '</div><p class="practice-repeat-note"><b>연습 횟수 제한 없음</b> · 로그인 성공·파일명·제출 완료 세 가지를 모두 확인할 때까지 충분히 반복 연습하세요.</p></div></aside>')
 
@@ -94,10 +101,22 @@ def add_guide_nav(page: str, active: str, previous: str, next_page: str) -> str:
     page = page.replace('방금 다운로드한 .ipynb 파일 1개를 골라 업로드하고,', '방금 다운로드한 .ipynb 파일 이름에 본인의 학번_이름을 적은 뒤 파일 1개를 골라 업로드하고,')
     page = page.replace('과제 제목·학번·이름을 적습니다.', '먼저 본인의 개인 Google 계정으로 로그인하고 표시된 이메일을 확인한 뒤 과제 제목·학번·이름을 적습니다.')
     page = page.replace('파일 이름과 출처를 적고 실제 사용한 원본 CSV·Excel을 모두 올립니다.', '실제로 제출할 개인 원본 CSV·Excel의 파일 이름에도 본인의 학번_이름을 넣습니다. 이름을 바꿨다면 Orange의 File에서 다시 연결하고 .ows를 저장해 확인하세요. 파일 이름과 출처를 적고 실제 사용한 원본을 모두 올립니다.')
+    submission_updates = {
+        "작성한 답부터 기한 안에 제출하고 선생님께 알려 주세요.": "제출 버튼을 누르기 전에 교사에게 문의하세요. 임의로 다시 제출하지 마세요.",
+        "첨부에 문제가 생기면 아래 ‘막혔을 때’의 안내대로 답부터 제출하세요.": "첨부에 문제가 생기면 제출 버튼을 누르기 전에 교사에게 문의하세요. 임의로 다시 제출하지 마세요.",
+        "파일 보완이 필요하다면 빠진 파일과 오류 내용을 선생님께 알려 주세요.": "제출 후 문제를 발견했다면 교사에게 알리세요. 임의로 다시 제출하지 마세요.",
+        "답변과 첨부 항목을 선택 입력으로 둔 것은 파일 문제로 제출 자체가 막히지 않게 하기 위해서입니다. 미작성 답변이 만점을 받는다는 뜻은 아닙니다.": "설문에서 선택 입력으로 표시된 항목도 필요한 답변과 제출물은 빠짐없이 준비하세요. 미작성 답변이 만점을 받는다는 뜻은 아닙니다.",
+        "11월 6일까지 작성한 답과 준비된 자료부터 제출하고 선생님께 알려 주세요. 첨부 칸 아래 <strong>제출 상태 → 파일 보완 필요</strong>를 고르고, 사유 칸에 올리지 못한 파일과 오류를 적은 뒤 <strong>제출</strong>을 누릅니다. 설문 자체에 접근하지 못하면 오류 화면과 시간을 기록하여 즉시 선생님께 알리세요.": "제출 버튼을 누르기 전에 교사에게 문의하세요. 임의로 다시 제출하지 마세요. 설문에 접근하거나 파일을 첨부할 수 없다면 오류 화면과 시간을 기록하여 제출 마감 전에 즉시 교사에게 알리세요.",
+        "<strong>제출 상태:</strong> 파일까지 준비했으면 <strong>완료</strong>, 파일이 부족하면 <strong>파일 보완 필요</strong>를 고르고 바로 아래 사유 칸에 빠진 파일을 적습니다.": "<strong>최종 확인:</strong> 답변과 필요한 파일을 모두 준비했는지 확인합니다. 빠진 파일이나 오류가 있으면 제출 버튼을 누르기 전에 교사에게 문의하세요. 실제 1차 수행평가는 1회만 제출합니다.",
+        "‘응답이 기록되었습니다’ 등 제출 완료 안내를 확인합니다. 응답 수정 링크가 보이면 보관하고, 마감 전 수정은 그 링크에서 고친 뒤 다시 제출합니다.": "‘응답이 기록되었습니다’ 등 제출 완료 안내를 확인합니다. 실제 2차 수행평가는 1회만 제출합니다. 제출 후 문제를 발견했다면 교사에게 알리고 임의로 다시 제출하지 마세요.",
+        "<strong>제출한 뒤 고쳤다면 파일도 교체하세요.</strong> 다시 모두 실행 → 저장 → .ipynb 다시 다운로드 → 응답 수정 링크에서 이전 첨부 교체 → 다시 제출합니다. Colab 사본을 바꿔도 이전 첨부는 자동으로 바뀌지 않습니다.": "<strong>수정과 파일 교체는 제출 전에 마치세요.</strong> 모두 실행 → 저장 → 최종 .ipynb 다운로드 → 첨부 파일 확인을 마친 뒤 1회만 제출합니다. Colab 사본을 바꿔도 이미 첨부한 파일은 자동으로 바뀌지 않으므로 제출 전에 확인하세요. 파일 문제가 해결되지 않으면 제출 버튼을 누르기 전에 교사에게 문의하세요. 임의로 다시 제출하지 마세요.",
+    }
+    for old, new in submission_updates.items():
+        page = page.replace(old, new)
     nav = '<div class="assessment-nav"><div class="assessment-nav-inner">' + global_nav(active, "../") + f'<div class="assessment-neighbors"><a href="../{previous}">← 이전 페이지</a><a href="../{next_page}">다음 페이지 →</a></div></div></div>'
     page = page.replace('<body>', '<body>' + login_notice("../") + example_policy_notice(active) + nav, 1)
     page = re.sub(r'(<details id="(?:submit|rubric|scores)"><summary>.*?</summary><div class="detail-body">)',
-                  lambda match: match.group(0) + f'<p class="example-policy-inline"><strong>{EXAMPLE_SUBMISSION_RULE}</strong> 파일명·학번·이름만 바꾼 제출도 동일하게 적용됩니다.</p>', page)
+                  lambda match: match.group(0) + f'<p class="example-policy-inline"><strong>{EXAMPLE_SUBMISSION_RULE}</strong> 파일명·학번·이름만 바꾼 제출도 동일하게 적용됩니다.</p><p class="single-submission-inline"><strong>{ONE_SUBMISSION_RULE}</strong> 답변과 첨부파일을 모두 준비하고 최종 점검한 뒤 제출하세요. <b>{DUPLICATE_SUBMISSION_RULE}</b></p>', page)
     css = '<style>.assessment-nav{position:sticky;top:0;z-index:100;background:#fff;border-bottom:2px solid #145c4c;box-shadow:0 3px 10px #0001}.assessment-nav-inner{max-width:1050px;margin:auto;padding:8px 16px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}.assessment-nav .global-nav{display:flex;flex-wrap:wrap;gap:4px}.assessment-nav a{display:inline-block;padding:7px 10px;border-radius:6px;color:#173d33;text-decoration:none;font-size:14px;font-weight:700}.assessment-nav a:hover,.assessment-nav a[aria-current=page]{background:#c5e8da}.assessment-neighbors{display:flex;gap:4px}.question-choices{padding:18px;background:#eaf3ef;border:1px solid #cbd8d1;border-radius:12px;margin:20px 0}.question-choices ol{list-style:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:0}.question-choices li{background:#fff;padding:11px;border-radius:7px;border:1px solid #cbd8d1}.question-choices li strong,.question-choices li span{display:block}.question-choices li span{font-size:13px}.question-choices code{white-space:nowrap}.diversity-visual{max-width:100%}@media(max-width:600px){.assessment-nav-inner{padding:4px 8px}.assessment-nav a{font-size:12px;padding:6px}.assessment-neighbors{width:100%;justify-content:space-between}.question-choices ol{grid-template-columns:1fr}}</style>'
     if active == "orange-guide":
         css = css.replace("</style>", ".branch-layout{width:min(100%,572px);margin-inline:auto}.branch-layout img{width:100%}</style>", 1)
@@ -284,14 +303,14 @@ def build_orange() -> None:
 <li><strong>파일과 화면 저장</strong><p>Orange 작업 파일(.ows), 전체 연결 화면 1장, 주요 결과 화면 1장을 준비합니다. 저장한 .ows를 다시 열어 확인하세요.</p></li>
 <li><strong>일곱 답변 작성</strong><p>결과물, 자료 구성, 연결 이유, 발견한 점과 근거, 진로·학업 도움, 느낀 점, 아쉬움·보완점을 각각 적습니다.</p></li>
 <li><strong>개인 Google 계정 로그인 후 설문으로 제출</strong><p>로그인한 계정을 확인한 뒤 학번·이름·과제 제목과 일곱 답변을 작성합니다. 모든 제출 파일 이름에 학번_이름을 적어 첨부하고 접수 완료 화면을 확인합니다.</p></li></ol>''', "steps")
-    body += section("제출 전 확인", example_policy_notice("orange") + '''<div class="callout"><strong>제출물</strong><p>.ows 파일 1개 + 전체 연결 화면 1장 + 결과 화면 1장 + 설문 답변 7개</p><p>교사 제공 CSV는 주제 번호만 적습니다. 직접 준비한 자료라면 실제 사용한 CSV·Excel 원본과 출처를 함께 제출하고, Excel의 시트 이름도 적습니다.</p></div>
+    body += section("제출 전 확인", f'<p class="single-submission-inline"><strong>{ONE_SUBMISSION_RULE}</strong> 1차 답변과 첨부파일을 모두 준비하고 최종 점검한 뒤 제출하세요. <b>{DUPLICATE_SUBMISSION_RULE}</b></p>' + example_policy_notice("orange") + '''<div class="callout"><strong>제출물</strong><p>.ows 파일 1개 + 전체 연결 화면 1장 + 결과 화면 1장 + 설문 답변 7개</p><p>교사 제공 CSV는 주제 번호만 적습니다. 직접 준비한 자료라면 실제 사용한 CSV·Excel 원본과 출처를 함께 제출하고, Excel의 시트 이름도 적습니다.</p></div>
 <div class="filename-check"><strong>파일명 확인: 학번_이름을 반드시 적으세요</strong><ul><li>작업 파일: <code>20601_홍길동.ows</code></li><li>전체 연결 화면: <code>20601_홍길동_연결화면.png</code></li><li>분석 결과 화면: <code>20601_홍길동_분석결과.png</code></li><li>개인 자료를 제출하는 경우: <code>20601_홍길동_자료.csv</code> 또는 <code>20601_홍길동_자료.xlsx</code></li></ul><p>본인의 학번·이름으로 바꾸고 실제 파일의 확장자는 유지하세요. 개인 자료 파일 이름을 바꿨다면 Orange의 File에서 다시 연결하고 .ows를 저장한 뒤 표·그래프가 열리는지 확인하세요.</p></div>
 <p>30점 = 답변 21점 + 자료 읽기·연결 4점 + 분석 결과 5점. 답변은 문항에 맞는 완결 문장 3개 이상 3점, 2개 2점, 1개 1점, 없으면 0점입니다. 같은 뜻의 반복은 한 번만 셉니다.</p>
-<p>파일 문제가 생기면 준비된 답변과 파일을 마감일까지 제출하고 교사에게 알리세요.</p>''')
+<p>파일 문제가 생기면 제출 버튼을 누르기 전에 교사에게 문의하세요. 임의로 다시 제출하지 마세요.</p>''')
     body += section("실습 영상", '<p>먼저 질문 선택 영상에서 다양한 축을 살펴보세요. 다음 영상은 새 작업 화면에서 위젯을 배치하고 현재 11열 CSV를 불러온 뒤 File의 두 갈래 연결, 표, 그래프를 순서대로 보여 줍니다. 참여·성과는 조작 예시 한 가지이므로 자신의 질문에 맞춰 축과 색을 바꾸세요.</p><video controls preload="metadata" width="100%"><source src="orange-guide/question-choices.mp4" type="video/mp4"><track kind="captions" src="orange-guide/question-choices.vtt" srclang="ko" label="한국어" default></video><p>' + link("orange-guide/question-choices.mp4", "질문 선택 영상 받기") + '</p><video controls preload="metadata" width="100%" poster="orange-guide/assets/csv_video_start.png"><source src="orange-guide/manual.mp4" type="video/mp4"><track kind="captions" src="orange-guide/subtitles.vtt" srclang="ko" label="한국어" default></video><p>' + link("orange-guide/manual.mp4", "기본 조작 영상 받기") + '</p>')
     body += section("주제별 CSV", '<p>하나만 골라도 됩니다. 내려받은 CSV의 내용은 바꾸지 말고 자신의 Orange 작업 파일을 만드세요.</p><ul class="topic-list">' + ''.join(rows) + '</ul>', "topics")
     body += f'<p class="example-policy-inline"><strong>{EXAMPLE_SUBMISSION_RULE}</strong></p>'
-    body += '<div class="submit"><div><h2>이제 제출하세요</h2><p><strong>개인 Google 계정 로그인 후 작성 · 모든 파일명에 학번_이름 필수</strong></p><p>답변과 첨부파일을 확인하고 제출 완료 화면까지 보세요.</p></div>' + link(ORANGE_FORM, "1차 제출 설문 열기", "button") + '</div>'
+    body += '<div class="submit"><div><h2>최종 점검 후 1회만 제출하세요</h2><p><strong>개인 Google 계정 로그인 후 작성 · 모든 파일명에 학번_이름 필수</strong></p><p><b>1차 수행평가는 1회만 제출합니다.</b> 답변·파일 내용·파일명을 모두 확인한 뒤 제출하고 접수 완료 화면까지 보세요.</p></div>' + link(ORANGE_FORM, "1차 제출 설문 열기", "button") + '</div>'
     for filename, source in (("manual.mp4", media / "manual-recaptured.mp4"),
                              ("subtitles.vtt", media / "subtitles-recaptured.vtt"),
                              ("question-choices.mp4", media / "diversity_addendum.mp4"),
@@ -350,20 +369,20 @@ def build_python() -> None:
 <li><strong>처음부터 모두 실행</strong><p>런타임 → 세션 다시 시작 및 모두 실행으로 계산, 표, 그래프에 오류가 없는지 확인합니다.</p></li>
 <li><strong>.ipynb 내려받기</strong><p>결과를 저장한 뒤 파일 → 다운로드 → .ipynb 다운로드를 선택합니다. Colab 링크나 .py 파일로 대신 내지 않습니다.</p></li>
 <li><strong>개인 Google 계정 로그인 후 설문으로 제출</strong><p>로그인한 계정을 확인한 뒤 학번·이름·과제 제목과 일곱 답변을 작성합니다. .ipynb 파일 이름에 학번_이름을 적어 첨부하고 접수 완료 화면을 확인합니다.</p></li></ol>''', "steps")
-    body += section("제출 전 확인", example_policy_notice("python") + '''<div class="callout"><strong>제출물</strong><p>실행 결과가 저장된 .ipynb 파일 1개(10MB 이하) + 설문 답변 7개</p><p>필요한 숫자는 노트북 안에 넣습니다. 별도 CSV·Excel·화면 캡처·수정 일지는 필수가 아닙니다.</p></div>
+    body += section("제출 전 확인", f'<p class="single-submission-inline"><strong>{ONE_SUBMISSION_RULE}</strong> 2차 답변과 첨부파일을 모두 준비하고 최종 점검한 뒤 제출하세요. <b>{DUPLICATE_SUBMISSION_RULE}</b></p>' + example_policy_notice("python") + '''<div class="callout"><strong>제출물</strong><p>실행 결과가 저장된 .ipynb 파일 1개(10MB 이하) + 설문 답변 7개</p><p>필요한 숫자는 노트북 안에 넣습니다. 별도 CSV·Excel·화면 캡처·수정 일지는 필수가 아닙니다.</p></div>
 <div class="filename-check"><strong>파일명 확인: 학번_이름을 반드시 적으세요</strong><p>예: <code>20601_홍길동.ipynb</code> 또는 <code>20601_홍길동_운동시간.ipynb</code></p><p>본인의 학번·이름으로 바꾸고 <b>.ipynb 확장자는 그대로</b> 유지하세요. 설문지에 첨부된 파일 이름도 확인합니다.</p></div>
 <p>답변 7개에는 자료·결과 소개, 어려움, 바꾼 부분과 달라진 결과, 코드 한 부분의 역할, 활용하고 싶은 곳, 배운 점, 다음 보완점을 적습니다.</p>
 <p>30점 = 답변 21점 + NumPy·pandas·Matplotlib 활용과 실행 9점. 답변은 문항에 맞는 완결 문장 3개 이상 3점, 2개 2점, 1개 1점, 없으면 0점입니다. 기본정보는 무배점입니다.</p>
 <p>실행이 막히면 이름과 숫자의 개수, 쉼표·따옴표·대괄호를 확인하고 다시 모두 실행하세요. 제출 마감은 2026년 11월 13일까지입니다.</p>''')
     body += section("실습 영상", '<video controls preload="metadata" width="100%"><source src="python-guide/쉬운_동영상_매뉴얼.mp4" type="video/mp4"><track kind="captions" src="python-guide/자막.vtt" srclang="ko" label="한국어" default></video><p>' + link("python-guide/쉬운_동영상_매뉴얼.mp4", "영상 파일 받기") + '</p>')
     body += f'<p class="example-policy-inline"><strong>{EXAMPLE_SUBMISSION_RULE}</strong></p>'
-    body += '<div class="submit"><div><h2>이제 제출하세요</h2><p><strong>개인 Google 계정 로그인 후 작성 · 파일명에 학번_이름 필수</strong></p><p>실행 결과가 들어 있는 .ipynb 파일을 첨부하고 일곱 답변을 작성하세요.</p></div>' + link(PYTHON_FORM, "2차 제출 설문 열기", "button") + '</div>'
+    body += '<div class="submit"><div><h2>최종 점검 후 1회만 제출하세요</h2><p><strong>개인 Google 계정 로그인 후 작성 · 파일명에 학번_이름 필수</strong></p><p><b>2차 수행평가는 1회만 제출합니다.</b> 실행 결과가 저장된 .ipynb와 일곱 답변을 최종 점검한 뒤 제출하고 접수 완료 화면까지 보세요.</p></div>' + link(PYTHON_FORM, "2차 제출 설문 열기", "button") + '</div>'
     (PUBLIC / "python.html").write_text(shell("2차 Python 수행평가", "python", body))
 
 
 def build_index() -> None:
     body = '''<div class="hero index-hero"><h1>2026 데이터과학<br>수행평가 안내</h1><p class="lead">1차와 2차 안내, 실습 자료, 제출 순서를 한곳에서 확인하세요.</p></div>
-<section class="section"><h2>처음 제출한다면 먼저 연습하세요</h2><p><strong>연습 횟수 제한 없음</strong> · 개인 Google 계정 로그인 성공, 학번_이름 파일명, 제출 완료 화면 확인까지 연습합니다. <strong>세 가지를 모두 확인할 때까지 충분히 반복 연습하세요.</strong></p><p>연습은 성적에 반영되지 않으며, 실제 수행평가는 아래 1차·2차 설문에 따로 제출합니다.</p><a class="button" href="practice.html">파일 제출 연습과 체크리스트 →</a></section>
+<section class="section"><h2>처음 제출한다면 먼저 연습하세요</h2><p><strong>연습 횟수 제한 없음</strong> · 개인 Google 계정 로그인 성공, 학번_이름 파일명, 제출 완료 화면 확인까지 연습합니다. <strong>세 가지를 모두 확인할 때까지 충분히 반복 연습하세요.</strong></p><p>연습은 성적에 반영되지 않으며, <strong>실제 수행평가는 모든 준비를 마친 뒤 1차 1회·2차 1회만 제출합니다.</strong> 같은 수행평가를 2회 이상 제출하면 <strong>가장 낮은 총점을 받은 제출물</strong>을 기준으로 채점합니다.</p><a class="button" href="practice.html">파일 제출 연습과 체크리스트 →</a></section>
 <div class="choice-grid"><a class="choice" href="orange.html"><span>1차 · Orange</span><h2>자료 하나로 그래프 하나 만들기</h2><p>평가: 11월 2~6일 · 제출 마감: 2026년 11월 6일까지</p><strong>안내와 자료 보기 →</strong></a>
 <a class="choice" href="python.html"><span>2차 · Python</span><h2>내 자료로 계산·표·그래프 만들기</h2><p>평가: 11월 9~13일 · 제출 마감: 2026년 11월 13일까지</p><strong>안내와 자료 보기 →</strong></a></div>
 <section class="section"><h2>제출 순서</h2><p>각 페이지에서 필요한 파일을 받고 실습 방법을 익힌 뒤, 해당 Google 설문에 일곱 답변과 파일을 차례대로 넣습니다. 마지막 접수 완료 화면까지 확인하세요.</p></section>'''
@@ -376,7 +395,7 @@ def build_practice() -> None:
     copy(ROOT / "practice-files" / "upload-practice.txt", PUBLIC / "files" / "upload-practice.txt")
     body = '''<div class="hero"><p class="number">1차·2차 공통 준비</p><h1>파일 제출을<br>먼저 연습해요</h1><p class="lead">내 Google 계정으로 로그인하고, 작은 파일 하나를 첨부해 제출 완료 화면까지 확인합니다.</p></div>
 <div class="route">연습 파일 받기 <span>→</span> 개인 계정 로그인 <span>→</span> 파일 첨부 <span>→</span> 제출 완료 확인</div>
-<div class="callout practice-repeat"><strong>연습 횟수 제한 없음</strong><p><b>로그인 성공 · 학번_이름 파일명 · 제출 완료</b> 세 가지를 모두 확인할 때까지 충분히 반복 연습하세요. 여러 번 제출해도 됩니다.</p><p>이 설문은 연습용이며 성적에 반영되지 않습니다. 연습을 마쳐도 1차·2차 수행평가 제출이 완료되는 것은 아닙니다. 실제 과제는 각 안내 페이지의 제출 설문으로 내세요.</p></div>'''
+<div class="callout practice-repeat"><strong>연습 횟수 제한 없음</strong><p><b>로그인 성공 · 학번_이름 파일명 · 제출 완료</b> 세 가지를 모두 확인할 때까지 충분히 반복 연습하세요. 여러 번 제출해도 됩니다.</p><p>이 설문은 연습용이며 성적에 반영되지 않습니다. 연습을 마쳐도 1차·2차 수행평가 제출이 완료되는 것은 아닙니다. <b>실제 수행평가는 모든 준비를 마친 뒤 1차 1회·2차 1회만 제출합니다.</b></p></div>'''
     body += section("준비물은 두 가지예요", '<ul><li>본인이 사용할 수 있는 <strong>개인 Google 계정</strong></li><li>아래에서 내려받는 작은 연습 파일 1개</li></ul><p>연습 파일 내용은 고칠 필요가 없습니다. <strong>파일 이름은 반드시 본인의 학번_이름_연습.txt로 바꾸세요.</strong></p><p>파일을 업로드하고 제출하면 Google 계정의 이름·이메일·프로필 사진이 자동으로 기록됩니다.</p><div class="practice-actions">' + link("files/upload-practice.txt", "① 연습 파일 받기 (.txt)", "button") + link(PRACTICE_FORM, "② 연습 설문 열기 ↗", "button") + '</div><p class="practice-small">설문은 새 탭에서 열립니다. 이 안내를 옆에 두고 차례대로 따라 하세요.</p>')
     body += section("처음부터 차례대로 따라 하세요", '''<ol class="steps practice-steps">
 <li><strong>연습 파일을 내려받아요</strong><p>위의 <b>① 연습 파일 받기</b>를 누릅니다. 보통 컴퓨터의 <b>다운로드</b> 폴더에 <code>upload-practice.txt</code>가 저장됩니다. 저장 위치를 확인한 뒤 파일을 선택하고 <b>이름 바꾸기</b>로 <b>본인의 학번_이름_연습.txt</b>로 바꿉니다. 예: <code>20601_홍길동_연습.txt</code>. <b>.txt 확장자는 지우거나 바꾸지 마세요.</b></p></li>
@@ -402,7 +421,7 @@ def build_practice() -> None:
 <dt>권한이 없다는 화면이 나와요.</dt><dd>개인 Google 계정으로 로그인했는지 확인합니다. 계속 막히면 오류 문구를 교사에게 보여 주세요.</dd>
 <dt>제출 버튼을 눌러도 다음 화면으로 넘어가지 않아요.</dt><dd>빨간색으로 표시된 필수 문항을 확인하세요. 파일 첨부와 <b>제출 전 체크리스트 3개</b>를 모두 확인한 뒤 다시 제출합니다. <b>파일 제출 연습이 완료되었습니다.</b> 화면이 나올 때까지 확인하세요.</dd>
 </dl>''')
-    body += section("연습을 마쳤다면", '''<p>위의 <a href="#practice-checklist">자기 체크리스트 세 가지</a>를 실제 화면에서 모두 확인했다면 다음 단계로 갑니다. 아직 익숙하지 않다면 횟수 제한 없이 다시 연습하세요.</p><p>공용 컴퓨터에서는 사용을 마친 뒤 <strong>Google 계정에서 로그아웃</strong>하세요. 창을 닫는 것만으로 로그아웃되는 것은 아닙니다.</p><p>이제 실제 과제의 안내에 따라 제출물을 준비하세요. 1차는 .ows와 화면 캡처, 2차는 실행 결과가 저장된 .ipynb를 제출합니다.</p><div class="practice-actions"><a class="button" href="orange.html">1차 안내로 이동</a><a class="button" href="python.html">2차 안내로 이동</a></div>''')
+    body += section("연습을 마쳤다면", '''<p>위의 <a href="#practice-checklist">자기 체크리스트 세 가지</a>를 실제 화면에서 모두 확인했다면 다음 단계로 갑니다. 아직 익숙하지 않다면 횟수 제한 없이 다시 연습하세요.</p><p>공용 컴퓨터에서는 사용을 마친 뒤 <strong>Google 계정에서 로그아웃</strong>하세요. 창을 닫는 것만으로 로그아웃되는 것은 아닙니다.</p><p>이제 실제 과제의 안내에 따라 제출물을 준비하세요. 1차는 .ows와 화면 캡처, 2차는 실행 결과가 저장된 .ipynb를 제출합니다.</p><p class="single-submission-inline"><strong>연습은 횟수 제한 없음 · 실제 수행평가는 차수별 1회만 제출</strong> 모든 준비와 최종 점검을 마친 뒤 제출하세요. 같은 수행평가를 2회 이상 제출하면 <b>가장 낮은 총점을 받은 제출물</b>을 기준으로 최종 점수를 산정합니다.</p><div class="practice-actions"><a class="button" href="orange.html">1차 안내로 이동</a><a class="button" href="python.html">2차 안내로 이동</a></div>''')
     (PUBLIC / "practice.html").write_text(shell("Google 로그인·파일 제출 연습", "practice", body), encoding="utf-8")
 
 

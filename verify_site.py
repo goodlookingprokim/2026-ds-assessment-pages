@@ -57,6 +57,18 @@ def main() -> None:
             failures.append(f"Missing mandatory login-before-writing or filename rule: {page.relative_to(ROOT)}")
         if not notice or any(phrase not in notice.group(0) for phrase in ("연습 횟수 제한 없음", "세 가지를 모두 확인할 때까지 충분히 반복 연습하세요.")):
             failures.append(f"Missing unlimited practice reminder: {page.relative_to(ROOT)}")
+        if not notice or any(phrase not in notice.group(0) for phrase in (
+            "실제 수행평가 제출은 차수별 1회만 허용합니다.",
+            "1차 1회 · 2차 1회.",
+            "아쉬운 점을 보완·수정하기 위한 재제출도 허용하지 않습니다.",
+            "같은 수행평가를 2회 이상 제출하면, 모든 제출 내용을 각각 채점한 뒤 가장 낮은 총점을 받은 제출물을 기준으로 최종 점수를 산정합니다.",
+            "연습용 설문만",
+        )):
+            failures.append(f"Missing one-submission / lowest-total policy or practice exception: {page.relative_to(ROOT)}")
+        if page.name != "practice.html":
+            for obsolete in ("답부터", "자료부터 제출", "파일 보완 필요", "응답 수정 링크", "제출한 뒤 고쳤다면"):
+                if obsolete in text:
+                    failures.append(f"Obsolete partial/repeat submission guidance: {page.relative_to(ROOT)} ({obsolete})")
         policy = re.search(r'<aside class="example-policy".*?</aside>', text, re.S)
         if page.name == "practice.html":
             if policy:
@@ -103,6 +115,8 @@ def main() -> None:
         text = (ROOT / page).read_text()
         if "docs.google.com/forms/d/e/" not in text:
             failures.append(f"Missing submission form: {page}")
+        if '최종 점검 후 1회만 제출하세요' not in text or text.count('가장 낮은 총점을 받은 제출물') < 2:
+            failures.append(f"Missing final once-only submission reminder: {page}")
         if text.count("제공된 예시자료를 그대로 제출하면 해당 수행평가를 0점 처리합니다.") < 3:
             failures.append(f"Missing example policy at grading/submission reminders: {page}")
     for kind in ("orange", "python"):

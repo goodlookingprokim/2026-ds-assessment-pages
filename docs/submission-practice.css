@@ -18,6 +18,11 @@
 .login-notice a:focus-visible{outline:3px solid #145c4c;outline-offset:3px}
 .login-notice-links{display:flex;flex-wrap:wrap;gap:5px 8px}
 .login-notice .practice-repeat-note{margin-top:8px;font-size:14px}
+.single-submission-notice{margin:14px 0;padding:14px 16px;border:3px solid #a52a22;border-radius:10px;background:#fff2ef;color:#531812}
+.single-submission-notice>strong{display:block;margin-bottom:8px;font-size:22px;line-height:1.5;color:#831c16}
+.login-notice .submission-practice-exception{margin-top:8px;font-size:15px}
+.single-submission-inline{padding:14px 16px;border-left:5px solid #a52a22;background:#fff2ef;color:#531812;line-height:1.7}
+.single-submission-inline>strong{display:block;margin-bottom:6px;color:#831c16}
 .example-policy{box-sizing:border-box;width:min(100% - 28px,1040px);margin:20px auto;padding:18px 20px;border:3px solid #a52a22;border-radius:10px;background:#fff2ef;color:#531812;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;line-height:1.65}
 .example-policy .example-policy-scope{margin:0 0 8px;font-size:15px;font-weight:800}
 .example-policy .example-policy-title{display:block;margin-bottom:10px;font-size:22px;line-height:1.5;color:#831c16}
