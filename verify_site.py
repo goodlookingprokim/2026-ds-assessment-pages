@@ -55,6 +55,16 @@ def main() -> None:
             failures.append(f"Missing top personal-account login notice: {page.relative_to(ROOT)}")
         if not notice or any(phrase not in notice.group(0) for phrase in ("개인 Google 계정 로그인 → 설문 작성", "모든 제출 파일명에 학번_이름 필수", "확장자는 그대로")):
             failures.append(f"Missing mandatory login-before-writing or filename rule: {page.relative_to(ROOT)}")
+        policy = re.search(r'<aside class="example-policy".*?</aside>', text, re.S)
+        if page.name == "practice.html":
+            if policy:
+                failures.append("Ungraded upload practice must not carry the zero-point assessment warning")
+        elif not policy or policy.start() > text.index("<h1") or any(phrase not in policy.group(0) for phrase in (
+            "실제 1차·2차 수행평가 필수 확인",
+            "제공된 예시자료를 그대로 제출하면 해당 수행평가를 0점 처리합니다.",
+            "파일명·학번·이름만 바꿔 제출한 경우도 동일하게 0점 처리합니다.",
+        )):
+            failures.append(f"Missing top unchanged-example zero-point rule: {page.relative_to(ROOT)}")
         if "PRACTICE_FORM_URL_PENDING" in text:
             failures.append(f"Unpublished practice form URL: {page.relative_to(ROOT)}")
         visible = re.sub(r"<style.*?</style>|<script.*?</script>", " ", text, flags=re.I | re.S)
@@ -88,8 +98,21 @@ def main() -> None:
         if len([name for name in archive.namelist() if re.search(r"CSV/[0-9][0-9]_.*\.csv$", name)]) != 30:
             failures.append("The Orange ZIP does not contain 30 CSV files")
     for page in ("orange.html", "python.html"):
-        if "docs.google.com/forms/d/e/" not in (ROOT / page).read_text():
+        text = (ROOT / page).read_text()
+        if "docs.google.com/forms/d/e/" not in text:
             failures.append(f"Missing submission form: {page}")
+        if text.count("제공된 예시자료를 그대로 제출하면 해당 수행평가를 0점 처리합니다.") < 3:
+            failures.append(f"Missing example policy at grading/submission reminders: {page}")
+    for kind in ("orange", "python"):
+        allowed = "교사 제공 CSV와 질문 예시는 활용해도 됩니다." if kind == "orange" else "기본 예시의 공통 코드는 활용해도 됩니다."
+        for relative in (f"{kind}.html", f"{kind}-guide/index.html"):
+            text = (ROOT / relative).read_text()
+            if allowed not in text:
+                failures.append(f"Missing allowed starter-material distinction: {relative}")
+            if relative.endswith("/index.html"):
+                submit = re.search(r'<details id="submit"><summary>.*?</summary><div class="detail-body"><p class="example-policy-inline">(.*?)</p>', text)
+                if not submit or "해당 수행평가를 0점 처리합니다." not in submit.group(1):
+                    failures.append(f"Missing guide submission zero-point reminder: {relative}")
     practice = (ROOT / "practice.html").read_text(encoding="utf-8")
     practice_forms = set(re.findall(r'https://docs\.google\.com/forms/[^"<> ]+', practice))
     assessed_forms = set(re.findall(r'https://docs\.google\.com/forms/[^"<> ]+', (ROOT / "orange.html").read_text() + (ROOT / "python.html").read_text())) - practice_forms

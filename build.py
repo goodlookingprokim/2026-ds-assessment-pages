@@ -20,6 +20,7 @@ def media_stamp(path: Path) -> str:
 ORANGE_FORM = "https://docs.google.com/forms/d/e/1FAIpQLSel8D22f8y8r0tWJYpux0EIqAKeGsD56wiYdUVHdgLPBNUaJA/viewform"
 PYTHON_FORM = "https://docs.google.com/forms/d/e/1FAIpQLSdb_FYb6h-rQgikGn8_F4y0rpf1DCMkWUvg1huvRV6fmeYClA/viewform"
 PRACTICE_FORM = "https://docs.google.com/forms/d/e/1FAIpQLScZOqpPs9S-6z6NNaMuyRPG4v95KnQXw4QXtG5yP9WdSp2YLQ/viewform"
+EXAMPLE_SUBMISSION_RULE = "제공된 예시자료를 그대로 제출하면 해당 수행평가를 0점 처리합니다."
 
 
 def copy(source: Path, dest: Path) -> None:
@@ -55,6 +56,22 @@ def login_notice(prefix: str = "") -> str:
         link(PRACTICE_FORM, "연습용 Google 설문 열기") + '</div></div></aside>')
 
 
+def example_policy_notice(active: str) -> str:
+    if active == "practice":
+        return ""
+    guidance = {
+        "orange": "<b>1차 Orange:</b> 교사 제공 CSV와 질문 예시는 활용해도 됩니다. 직접 질문을 선택하고 분석을 수행하여 자신의 작업 파일·결과 화면·답변을 만드세요. 완성 예시 OWS·화면 캡처·답변을 그대로 제출하면 안 됩니다.",
+        "python": "<b>2차 Python:</b> 기본 예시의 공통 코드는 활용해도 됩니다. 자신의 주제·자료로 바꾸어 실행하고 결과를 자신의 말로 설명하세요. 축제·운동 시간 예시 노트북이나 답변을 그대로 제출하면 안 됩니다.",
+    }
+    key = active.removesuffix("-guide")
+    details = [guidance[key]] if key in guidance else list(guidance.values())
+    return ('<aside class="example-policy" aria-label="예시자료 그대로 제출 시 0점 안내">'
+        '<p class="example-policy-scope">실제 1차·2차 수행평가 필수 확인</p>'
+        f'<strong class="example-policy-title">{EXAMPLE_SUBMISSION_RULE}</strong>'
+        '<p><b>파일명·학번·이름만 바꿔 제출한 경우도 동일하게 0점 처리합니다.</b></p>'
+        + ''.join(f'<p>{detail}</p>' for detail in details) + '</aside>')
+
+
 def shell(title: str, active: str, body: str) -> str:
     caption_assets = f'<link rel="stylesheet" href="caption-panel.css"><script src="caption-panel.js?v={CAPTION_SCRIPT_VERSION}" defer></script>' if '<video' in body else ''
     return f'''<!doctype html>
@@ -63,6 +80,7 @@ def shell(title: str, active: str, body: str) -> str:
 <title>{escape(title)} · 2026 데이터과학</title><link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="submission-practice.css?v={SUBMISSION_STYLE_VERSION}">{caption_assets}</head>
 <body><a class="skip" href="#content">본문으로 바로 가기</a>
 {login_notice()}
+{example_policy_notice(active)}
 <header class="site-header"><div class="wrap header-inner"><a class="brand" href="index.html">2026 데이터과학 <span>수행평가 안내</span></a>
 {global_nav(active)}</div></header>
 <main class="wrap" id="content">{body}</main><footer class="wrap footer">{global_nav(active)}<p>고2 6·7·8·9반 · 자료와 제출 방법은 이 페이지에서 확인하세요. 제출은 Google 로그인이 필요합니다.</p></footer>
@@ -77,7 +95,9 @@ def add_guide_nav(page: str, active: str, previous: str, next_page: str) -> str:
     page = page.replace('과제 제목·학번·이름을 적습니다.', '먼저 본인의 개인 Google 계정으로 로그인하고 표시된 이메일을 확인한 뒤 과제 제목·학번·이름을 적습니다.')
     page = page.replace('파일 이름과 출처를 적고 실제 사용한 원본 CSV·Excel을 모두 올립니다.', '실제로 제출할 개인 원본 CSV·Excel의 파일 이름에도 본인의 학번_이름을 넣습니다. 이름을 바꿨다면 Orange의 File에서 다시 연결하고 .ows를 저장해 확인하세요. 파일 이름과 출처를 적고 실제 사용한 원본을 모두 올립니다.')
     nav = '<div class="assessment-nav"><div class="assessment-nav-inner">' + global_nav(active, "../") + f'<div class="assessment-neighbors"><a href="../{previous}">← 이전 페이지</a><a href="../{next_page}">다음 페이지 →</a></div></div></div>'
-    page = page.replace('<body>', '<body>' + login_notice("../") + nav, 1)
+    page = page.replace('<body>', '<body>' + login_notice("../") + example_policy_notice(active) + nav, 1)
+    page = re.sub(r'(<details id="(?:submit|rubric|scores)"><summary>.*?</summary><div class="detail-body">)',
+                  lambda match: match.group(0) + f'<p class="example-policy-inline"><strong>{EXAMPLE_SUBMISSION_RULE}</strong> 파일명·학번·이름만 바꾼 제출도 동일하게 적용됩니다.</p>', page)
     css = '<style>.assessment-nav{position:sticky;top:0;z-index:100;background:#fff;border-bottom:2px solid #145c4c;box-shadow:0 3px 10px #0001}.assessment-nav-inner{max-width:1050px;margin:auto;padding:8px 16px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}.assessment-nav .global-nav{display:flex;flex-wrap:wrap;gap:4px}.assessment-nav a{display:inline-block;padding:7px 10px;border-radius:6px;color:#173d33;text-decoration:none;font-size:14px;font-weight:700}.assessment-nav a:hover,.assessment-nav a[aria-current=page]{background:#c5e8da}.assessment-neighbors{display:flex;gap:4px}.question-choices{padding:18px;background:#eaf3ef;border:1px solid #cbd8d1;border-radius:12px;margin:20px 0}.question-choices ol{list-style:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:0}.question-choices li{background:#fff;padding:11px;border-radius:7px;border:1px solid #cbd8d1}.question-choices li strong,.question-choices li span{display:block}.question-choices li span{font-size:13px}.question-choices code{white-space:nowrap}.diversity-visual{max-width:100%}@media(max-width:600px){.assessment-nav-inner{padding:4px 8px}.assessment-nav a{font-size:12px;padding:6px}.assessment-neighbors{width:100%;justify-content:space-between}.question-choices ol{grid-template-columns:1fr}}</style>'
     if active == "orange-guide":
         css = css.replace("</style>", ".branch-layout{width:min(100%,572px);margin-inline:auto}.branch-layout img{width:100%}</style>", 1)
@@ -165,7 +185,7 @@ def revise_orange_guide(page: str) -> str:
     page = page.replace('<h3>⑤ 내가 고른 질문으로 그래프 만들고 읽기</h3>', '<h3>⑤ 내가 고른 질문으로 그래프 만들고 읽기</h3><figure><img class="diversity-visual" src="assets/02_axes_workflow.png" alt="질문을 고르고 Orange 산점도에서 가로축·세로축·색을 설정하는 순서"><figcaption>질문에서 그래프 설정으로 이어지는 순서</figcaption></figure>')
     page = page.replace('<h3>Windows · 기본', '<figure><img class="diversity-visual" src="assets/04_capture_checklist.png" alt="결과 화면 캡처에 그래프, 가로축, 세로축, 색 설정이 모두 보여야 한다는 확인표"><figcaption>결과 화면을 저장하기 전 확인</figcaption></figure><h3>Windows · 기본', 1)
     page = page.replace('CSV를 불러오고 두 도구를 연결하는 기존 실제 화면 시연입니다.', '새 작업 화면에서 위젯 세 개를 배치하고 현재 11열 CSV를 불러온 다음, File의 두 갈래 연결, Data Table의 표, Scatter Plot의 축과 색을 보여 줍니다. 참여·성과는 조작 예시 한 가지이며 자신의 질문에 맞춰 축과 색을 바꾸세요.')
-    page = page.replace('<p class="small">완성 예시를 보는 목적은 연결과 결과를 이해하는 것입니다.', '<p class="small">다른 컴퓨터에서 완성 예시 OWS를 열면 File 위젯에서 내려받은 같은 번호 CSV를 다시 선택하세요. 자신의 질문으로 분석한 작업 파일은 따로 저장하세요.</p><p class="small">완성 예시를 보는 목적은 연결과 결과를 이해하는 것입니다.')
+    page = page.replace('<p class="small">완성 예시를 보는 목적은 연결과 결과를 이해하는 것입니다.', f'<p class="example-policy-inline"><strong>{EXAMPLE_SUBMISSION_RULE}</strong> 완성 예시 OWS는 조작 방법을 확인하는 참고용입니다.</p><p class="small">다른 컴퓨터에서 완성 예시 OWS를 열면 File 위젯에서 내려받은 같은 번호 CSV를 다시 선택하세요. 자신의 질문으로 분석한 작업 파일은 따로 저장하세요.</p><p class="small">완성 예시를 보는 목적은 연결과 결과를 이해하는 것입니다.')
     page = page.replace('경계 사례는 AI가 임의로 0점 처리하지 않고 교사 확인 전까지 보류한다.', '경계 사례는 근거를 다시 확인하여 교사가 판단한다.')
     page = page.replace('기술 복원 기한 뒤에도 OWS', '교사의 확인을 거친 뒤에도 OWS')
     new_video = '<p><strong>먼저 질문 선택 영상을 보세요.</strong> 여러 분석 질문과 현재 11열 CSV를 소개합니다. 이어서 실제 Orange 화면 영상에서 새 화면 열기, 위젯 배치, CSV 불러오기, 두 갈래 연결과 표·그래프를 순서대로 따라 하세요.</p><video controls preload="metadata" poster="assets/01_question_choices.png"><source src="diversity_addendum.mp4" type="video/mp4"><track kind="captions" src="diversity_addendum.vtt" srclang="ko" label="한국어" default></video><p><a href="diversity_addendum.mp4" download>질문과 현재 자료 확인 영상 내려받기</a></p>'
@@ -194,7 +214,7 @@ def exercise_example_block(source: Path) -> str:
     notebook = json.loads(source.read_text(encoding='utf-8'))
     labels = {3: '1. 내 자료', 5: '2. NumPy 계산', 7: '3. pandas 표', 9: '4. Matplotlib 그래프'}
     blocks = ''.join(f'<h4>{title}</h4><pre class="notebook-code"><code>{escape("".join(notebook["cells"][index]["source"]))}</code></pre>' for index, title in labels.items())
-    return '<details id="exercise-code"><summary>운동 시간으로 바꾼 예시 보기 · 코드 펼치기</summary><div class="detail-body"><p>아래는 내려받는 예시 노트북의 주요 코드입니다. 내 자료 셀만 바꾸어 실행하세요.</p>' + blocks + '</div></details>'
+    return '<details id="exercise-code"><summary>운동 시간으로 바꾼 예시 보기 · 코드 펼치기</summary><div class="detail-body"><p>아래는 내려받는 예시 노트북의 주요 코드입니다. 내 자료 셀을 자신의 주제·자료로 바꾸어 실행하고 결과를 설명하세요. 예시 노트북을 그대로 제출하면 해당 수행평가는 0점입니다.</p>' + blocks + '</div></details>'
 
 
 def build_orange() -> None:
@@ -264,12 +284,13 @@ def build_orange() -> None:
 <li><strong>파일과 화면 저장</strong><p>Orange 작업 파일(.ows), 전체 연결 화면 1장, 주요 결과 화면 1장을 준비합니다. 저장한 .ows를 다시 열어 확인하세요.</p></li>
 <li><strong>일곱 답변 작성</strong><p>결과물, 자료 구성, 연결 이유, 발견한 점과 근거, 진로·학업 도움, 느낀 점, 아쉬움·보완점을 각각 적습니다.</p></li>
 <li><strong>개인 Google 계정 로그인 후 설문으로 제출</strong><p>로그인한 계정을 확인한 뒤 학번·이름·과제 제목과 일곱 답변을 작성합니다. 모든 제출 파일 이름에 학번_이름을 적어 첨부하고 접수 완료 화면을 확인합니다.</p></li></ol>''', "steps")
-    body += section("제출 전 확인", '''<div class="callout"><strong>제출물</strong><p>.ows 파일 1개 + 전체 연결 화면 1장 + 결과 화면 1장 + 설문 답변 7개</p><p>교사 제공 CSV는 주제 번호만 적습니다. 직접 준비한 자료라면 실제 사용한 CSV·Excel 원본과 출처를 함께 제출하고, Excel의 시트 이름도 적습니다.</p></div>
+    body += section("제출 전 확인", example_policy_notice("orange") + '''<div class="callout"><strong>제출물</strong><p>.ows 파일 1개 + 전체 연결 화면 1장 + 결과 화면 1장 + 설문 답변 7개</p><p>교사 제공 CSV는 주제 번호만 적습니다. 직접 준비한 자료라면 실제 사용한 CSV·Excel 원본과 출처를 함께 제출하고, Excel의 시트 이름도 적습니다.</p></div>
 <div class="filename-check"><strong>파일명 확인: 학번_이름을 반드시 적으세요</strong><ul><li>작업 파일: <code>20601_홍길동.ows</code></li><li>전체 연결 화면: <code>20601_홍길동_연결화면.png</code></li><li>분석 결과 화면: <code>20601_홍길동_분석결과.png</code></li><li>개인 자료를 제출하는 경우: <code>20601_홍길동_자료.csv</code> 또는 <code>20601_홍길동_자료.xlsx</code></li></ul><p>본인의 학번·이름으로 바꾸고 실제 파일의 확장자는 유지하세요. 개인 자료 파일 이름을 바꿨다면 Orange의 File에서 다시 연결하고 .ows를 저장한 뒤 표·그래프가 열리는지 확인하세요.</p></div>
 <p>30점 = 답변 21점 + 자료 읽기·연결 4점 + 분석 결과 5점. 답변은 문항에 맞는 완결 문장 3개 이상 3점, 2개 2점, 1개 1점, 없으면 0점입니다. 같은 뜻의 반복은 한 번만 셉니다.</p>
 <p>파일 문제가 생기면 준비된 답변과 파일을 마감일까지 제출하고 교사에게 알리세요.</p>''')
     body += section("실습 영상", '<p>먼저 질문 선택 영상에서 다양한 축을 살펴보세요. 다음 영상은 새 작업 화면에서 위젯을 배치하고 현재 11열 CSV를 불러온 뒤 File의 두 갈래 연결, 표, 그래프를 순서대로 보여 줍니다. 참여·성과는 조작 예시 한 가지이므로 자신의 질문에 맞춰 축과 색을 바꾸세요.</p><video controls preload="metadata" width="100%"><source src="orange-guide/question-choices.mp4" type="video/mp4"><track kind="captions" src="orange-guide/question-choices.vtt" srclang="ko" label="한국어" default></video><p>' + link("orange-guide/question-choices.mp4", "질문 선택 영상 받기") + '</p><video controls preload="metadata" width="100%" poster="orange-guide/assets/csv_video_start.png"><source src="orange-guide/manual.mp4" type="video/mp4"><track kind="captions" src="orange-guide/subtitles.vtt" srclang="ko" label="한국어" default></video><p>' + link("orange-guide/manual.mp4", "기본 조작 영상 받기") + '</p>')
     body += section("주제별 CSV", '<p>하나만 골라도 됩니다. 내려받은 CSV의 내용은 바꾸지 말고 자신의 Orange 작업 파일을 만드세요.</p><ul class="topic-list">' + ''.join(rows) + '</ul>', "topics")
+    body += f'<p class="example-policy-inline"><strong>{EXAMPLE_SUBMISSION_RULE}</strong></p>'
     body += '<div class="submit"><div><h2>이제 제출하세요</h2><p><strong>개인 Google 계정 로그인 후 작성 · 모든 파일명에 학번_이름 필수</strong></p><p>답변과 첨부파일을 확인하고 제출 완료 화면까지 보세요.</p></div>' + link(ORANGE_FORM, "1차 제출 설문 열기", "button") + '</div>'
     for filename, source in (("manual.mp4", media / "manual-recaptured.mp4"),
                              ("subtitles.vtt", media / "subtitles-recaptured.vtt"),
@@ -302,7 +323,7 @@ def build_python() -> None:
     page = page.replace(old_button, '')
     anchor = '<a class="button secondary" href="제출예시_운동시간.ipynb" download>바꾼 예시 파일 받기</a></div>'
     assert anchor in page
-    page = page.replace(anchor, anchor + exercise_example_block(source / "제출예시_운동시간.ipynb"))
+    page = page.replace(anchor, anchor + f'<p class="example-policy-inline"><strong>{EXAMPLE_SUBMISSION_RULE}</strong> 내려받은 예시는 참고용이며 자신의 주제·자료로 바꾸어 실행해야 합니다.</p>' + exercise_example_block(source / "제출예시_운동시간.ipynb"))
     page = page.replace('</head>', '<style>.notebook-code{overflow-x:auto;white-space:pre;max-height:440px;overflow-y:auto;padding:16px;background:#162321;color:#effaf1;border-radius:8px;line-height:1.5}.notebook-code code{background:transparent;color:inherit;padding:0}.detail-body h4{margin:20px 0 6px}</style></head>', 1)
     page = add_guide_nav(page, 'python-guide', 'python.html', 'index.html')
     (guide / "index.html").parent.mkdir(parents=True, exist_ok=True)
@@ -319,7 +340,7 @@ def build_python() -> None:
 <p class="lead">예시 노트북을 내 주제와 자료에 맞게 바꾸고, 실행 결과를 저장해 설명합니다.</p>
 <div class="date"><strong>평가: 11월 9~13일</strong><strong>제출 마감: 2026년 11월 13일까지</strong></div></div>
 <div class="route">예시 받기 <span>→</span> 내 자료로 바꾸기 <span>→</span> 모두 실행 <span>→</span> .ipynb 저장 <span>→</span> 답변·파일 제출</div>'''
-    body += section("먼저 받을 자료", '<p>아래 파일은 이 페이지에서 바로 받을 수 있습니다. 예시 노트북의 <strong>★ 1. 내 자료</strong> 셀부터 바꾸세요. 예시 코드는 그대로 사용해도 됩니다.</p><ul class="resource-list">' +
+    body += section("먼저 받을 자료", '<p>아래 파일은 이 페이지에서 바로 받을 수 있습니다. 예시 노트북의 <strong>★ 1. 내 자료</strong> 셀을 자신의 주제·자료로 바꾸세요. 공통 코드는 활용해도 되지만, 예시 노트북을 그대로 제출하면 해당 수행평가는 <strong>0점</strong>입니다.</p><ul class="resource-list">' +
         file_item("python-guide/기본예시_축제.ipynb", "축제 기본 예시 노트북", "Google Colab에서 업로드해 사본 저장") +
         file_item("python-guide/제출예시_운동시간.ipynb", "운동 시간으로 바꾼 예시", "자료를 바꾸는 방법 참고") +
         file_item("python-guide/index.html", "화면을 따라 하는 실습 가이드", "Colab·저장·다운로드·설문 제출") +
@@ -329,12 +350,13 @@ def build_python() -> None:
 <li><strong>처음부터 모두 실행</strong><p>런타임 → 세션 다시 시작 및 모두 실행으로 계산, 표, 그래프에 오류가 없는지 확인합니다.</p></li>
 <li><strong>.ipynb 내려받기</strong><p>결과를 저장한 뒤 파일 → 다운로드 → .ipynb 다운로드를 선택합니다. Colab 링크나 .py 파일로 대신 내지 않습니다.</p></li>
 <li><strong>개인 Google 계정 로그인 후 설문으로 제출</strong><p>로그인한 계정을 확인한 뒤 학번·이름·과제 제목과 일곱 답변을 작성합니다. .ipynb 파일 이름에 학번_이름을 적어 첨부하고 접수 완료 화면을 확인합니다.</p></li></ol>''', "steps")
-    body += section("제출 전 확인", '''<div class="callout"><strong>제출물</strong><p>실행 결과가 저장된 .ipynb 파일 1개(10MB 이하) + 설문 답변 7개</p><p>필요한 숫자는 노트북 안에 넣습니다. 별도 CSV·Excel·화면 캡처·수정 일지는 필수가 아닙니다.</p></div>
+    body += section("제출 전 확인", example_policy_notice("python") + '''<div class="callout"><strong>제출물</strong><p>실행 결과가 저장된 .ipynb 파일 1개(10MB 이하) + 설문 답변 7개</p><p>필요한 숫자는 노트북 안에 넣습니다. 별도 CSV·Excel·화면 캡처·수정 일지는 필수가 아닙니다.</p></div>
 <div class="filename-check"><strong>파일명 확인: 학번_이름을 반드시 적으세요</strong><p>예: <code>20601_홍길동.ipynb</code> 또는 <code>20601_홍길동_운동시간.ipynb</code></p><p>본인의 학번·이름으로 바꾸고 <b>.ipynb 확장자는 그대로</b> 유지하세요. 설문지에 첨부된 파일 이름도 확인합니다.</p></div>
 <p>답변 7개에는 자료·결과 소개, 어려움, 바꾼 부분과 달라진 결과, 코드 한 부분의 역할, 활용하고 싶은 곳, 배운 점, 다음 보완점을 적습니다.</p>
 <p>30점 = 답변 21점 + NumPy·pandas·Matplotlib 활용과 실행 9점. 답변은 문항에 맞는 완결 문장 3개 이상 3점, 2개 2점, 1개 1점, 없으면 0점입니다. 기본정보는 무배점입니다.</p>
 <p>실행이 막히면 이름과 숫자의 개수, 쉼표·따옴표·대괄호를 확인하고 다시 모두 실행하세요. 제출 마감은 2026년 11월 13일까지입니다.</p>''')
     body += section("실습 영상", '<video controls preload="metadata" width="100%"><source src="python-guide/쉬운_동영상_매뉴얼.mp4" type="video/mp4"><track kind="captions" src="python-guide/자막.vtt" srclang="ko" label="한국어" default></video><p>' + link("python-guide/쉬운_동영상_매뉴얼.mp4", "영상 파일 받기") + '</p>')
+    body += f'<p class="example-policy-inline"><strong>{EXAMPLE_SUBMISSION_RULE}</strong></p>'
     body += '<div class="submit"><div><h2>이제 제출하세요</h2><p><strong>개인 Google 계정 로그인 후 작성 · 파일명에 학번_이름 필수</strong></p><p>실행 결과가 들어 있는 .ipynb 파일을 첨부하고 일곱 답변을 작성하세요.</p></div>' + link(PYTHON_FORM, "2차 제출 설문 열기", "button") + '</div>'
     (PUBLIC / "python.html").write_text(shell("2차 Python 수행평가", "python", body))
 

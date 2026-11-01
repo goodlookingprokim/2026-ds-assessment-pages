@@ -17,6 +17,12 @@
 .login-notice a:hover{color:#145c4c}
 .login-notice a:focus-visible{outline:3px solid #145c4c;outline-offset:3px}
 .login-notice-links{display:flex;flex-wrap:wrap;gap:5px 8px}
+.example-policy{box-sizing:border-box;width:min(100% - 28px,1040px);margin:20px auto;padding:18px 20px;border:3px solid #a52a22;border-radius:10px;background:#fff2ef;color:#531812;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;line-height:1.65}
+.example-policy .example-policy-scope{margin:0 0 8px;font-size:15px;font-weight:800}
+.example-policy .example-policy-title{display:block;margin-bottom:10px;font-size:22px;line-height:1.5;color:#831c16}
+.example-policy p{max-width:none;margin:8px 0 0;font-size:16px}
+.example-policy-inline{padding:14px 16px;border-left:5px solid #a52a22;background:#fff2ef;color:#531812;line-height:1.6}
+.example-policy-inline strong{color:#831c16}
 .practice-actions{display:flex;flex-wrap:wrap;gap:12px;margin:20px 0 12px}
 .practice-actions .button{white-space:normal}
 .practice-small{font-size:15px;color:#4d625b}
