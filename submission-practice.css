@@ -17,6 +17,7 @@
 .login-notice a:hover{color:#145c4c}
 .login-notice a:focus-visible{outline:3px solid #145c4c;outline-offset:3px}
 .login-notice-links{display:flex;flex-wrap:wrap;gap:5px 8px}
+.login-notice .practice-repeat-note{margin-top:8px;font-size:14px}
 .example-policy{box-sizing:border-box;width:min(100% - 28px,1040px);margin:20px auto;padding:18px 20px;border:3px solid #a52a22;border-radius:10px;background:#fff2ef;color:#531812;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;line-height:1.65}
 .example-policy .example-policy-scope{margin:0 0 8px;font-size:15px;font-weight:800}
 .example-policy .example-policy-title{display:block;margin-bottom:10px;font-size:22px;line-height:1.5;color:#831c16}
@@ -26,6 +27,16 @@
 .practice-actions{display:flex;flex-wrap:wrap;gap:12px;margin:20px 0 12px}
 .practice-actions .button{white-space:normal}
 .practice-small{font-size:15px;color:#4d625b}
+.practice-repeat{border:2px solid #145c4c;background:#e7f4ed;color:#173d33}
+.practice-repeat>strong{font-size:22px}
+.practice-checklist{min-width:0;margin:20px 0;padding:16px;border:2px solid #145c4c;border-radius:10px;background:#f1f8f4}
+.practice-checklist legend{padding:0 8px;font-size:22px;font-weight:800;color:#173d33}
+.practice-checklist label{display:flex;align-items:flex-start;gap:12px;margin:10px 0;padding:16px;border:1px solid #a5beb3;border-radius:8px;background:#fff;cursor:pointer}
+.practice-checklist input{flex:0 0 auto;width:24px;height:24px;margin:3px 0 0;accent-color:#145c4c}
+.practice-checklist input:focus-visible{outline:3px solid #174c80;outline-offset:3px}
+.practice-checklist span{min-width:0;line-height:1.7}
+.practice-checklist strong{display:block;font-size:20px;color:#173d33}
+.practice-checklist code{white-space:normal;overflow-wrap:anywhere}
 .practice-steps{grid-template-columns:1fr}
 .practice-steps li{padding-bottom:22px}
 .practice-help dt{font-weight:800;margin-top:22px}

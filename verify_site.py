@@ -55,6 +55,8 @@ def main() -> None:
             failures.append(f"Missing top personal-account login notice: {page.relative_to(ROOT)}")
         if not notice or any(phrase not in notice.group(0) for phrase in ("개인 Google 계정 로그인 → 설문 작성", "모든 제출 파일명에 학번_이름 필수", "확장자는 그대로")):
             failures.append(f"Missing mandatory login-before-writing or filename rule: {page.relative_to(ROOT)}")
+        if not notice or any(phrase not in notice.group(0) for phrase in ("연습 횟수 제한 없음", "세 가지를 모두 확인할 때까지 충분히 반복 연습하세요.")):
+            failures.append(f"Missing unlimited practice reminder: {page.relative_to(ROOT)}")
         policy = re.search(r'<aside class="example-policy".*?</aside>', text, re.S)
         if page.name == "practice.html":
             if policy:
@@ -118,9 +120,16 @@ def main() -> None:
     assessed_forms = set(re.findall(r'https://docs\.google\.com/forms/[^"<> ]+', (ROOT / "orange.html").read_text() + (ROOT / "python.html").read_text())) - practice_forms
     if len(practice_forms) != 1 or len(assessed_forms) != 2:
         failures.append("Practice must link to one separate form and preserve both assessed submission forms")
-    for phrase in ("파일 추가", "업로드", "파일 이름", "파일 제출 연습이 완료되었습니다.", "여러 번", "성적에 반영되지", "로그아웃", "10MB 이하", "학번_이름_연습.txt", "이름 바꾸기"):
+    for phrase in ("파일 추가", "업로드", "파일 이름", "파일 제출 연습이 완료되었습니다.", "여러 번", "성적에 반영되지", "로그아웃", "10MB 이하", "학번_이름_연습.txt", "이름 바꾸기", "연습 횟수 제한 없음", "제출 전 체크리스트 (3개 모두 확인)", "다시 연습 제출하기", "자동으로 검사하거나 제출하지 않습니다."):
         if phrase not in practice:
             failures.append(f"Missing practice instruction: {phrase}")
+    checklist = re.search(r'<fieldset class="practice-checklist".*?</fieldset>', practice, re.S)
+    if not checklist or any(name not in checklist.group(0) for name in ('name="practice-login"', 'name="practice-filename"', 'name="practice-submitted"')):
+        failures.append("Missing three labelled manual practice checkboxes")
+    elif len(re.findall(r'<label><input type="checkbox"[^>]*><span>', checklist.group(0))) != 3 or re.search(r'<input[^>]*\b(?:checked|disabled|required)\b', checklist.group(0)):
+        failures.append("Practice self-check must have three enabled, initially unchecked labelled checkboxes")
+    if '내 개인 Google 계정으로 로그인했고, 올린 파일명을 확인했습니다.' in practice:
+        failures.append("Practice steps still refer to the obsolete single form checkbox")
     sample = ROOT / "files/upload-practice.txt"
     if not sample.is_file() or not 0 < sample.stat().st_size < 10000:
         failures.append("Practice download must be a small, nonempty text file")

@@ -53,7 +53,7 @@ def login_notice(prefix: str = "") -> str:
         '<p class="submission-name-example">예: <code>20601_홍길동.ows</code> · <code>20601_홍길동_연결화면.png</code> · <code>20601_홍길동.ipynb</code></p>'
         '</div></div><p class="submission-scope">1차·2차 수행평가와 연습 제출 모두 적용합니다. 예시의 학번·이름은 본인의 것으로 바꾸세요.</p>'
         '<div class="login-notice-links">' + link(prefix + "practice.html", "처음이라면 파일 제출 연습부터 →") + ' · ' +
-        link(PRACTICE_FORM, "연습용 Google 설문 열기") + '</div></div></aside>')
+        link(PRACTICE_FORM, "연습용 Google 설문 열기") + '</div><p class="practice-repeat-note"><b>연습 횟수 제한 없음</b> · 로그인 성공·파일명·제출 완료 세 가지를 모두 확인할 때까지 충분히 반복 연습하세요.</p></div></aside>')
 
 
 def example_policy_notice(active: str) -> str:
@@ -363,7 +363,7 @@ def build_python() -> None:
 
 def build_index() -> None:
     body = '''<div class="hero index-hero"><h1>2026 데이터과학<br>수행평가 안내</h1><p class="lead">1차와 2차 안내, 실습 자료, 제출 순서를 한곳에서 확인하세요.</p></div>
-<section class="section"><h2>처음 제출한다면 먼저 연습하세요</h2><p>개인 Google 계정 로그인부터 파일 첨부, 제출 완료 화면 확인까지 연습합니다. 연습은 성적에 반영되지 않으며, 실제 수행평가는 아래 1차·2차 설문에 따로 제출합니다.</p><a class="button" href="practice.html">파일 제출 연습과 사용 방법 →</a></section>
+<section class="section"><h2>처음 제출한다면 먼저 연습하세요</h2><p><strong>연습 횟수 제한 없음</strong> · 개인 Google 계정 로그인 성공, 학번_이름 파일명, 제출 완료 화면 확인까지 연습합니다. <strong>세 가지를 모두 확인할 때까지 충분히 반복 연습하세요.</strong></p><p>연습은 성적에 반영되지 않으며, 실제 수행평가는 아래 1차·2차 설문에 따로 제출합니다.</p><a class="button" href="practice.html">파일 제출 연습과 체크리스트 →</a></section>
 <div class="choice-grid"><a class="choice" href="orange.html"><span>1차 · Orange</span><h2>자료 하나로 그래프 하나 만들기</h2><p>평가: 11월 2~6일 · 제출 마감: 2026년 11월 6일까지</p><strong>안내와 자료 보기 →</strong></a>
 <a class="choice" href="python.html"><span>2차 · Python</span><h2>내 자료로 계산·표·그래프 만들기</h2><p>평가: 11월 9~13일 · 제출 마감: 2026년 11월 13일까지</p><strong>안내와 자료 보기 →</strong></a></div>
 <section class="section"><h2>제출 순서</h2><p>각 페이지에서 필요한 파일을 받고 실습 방법을 익힌 뒤, 해당 Google 설문에 일곱 답변과 파일을 차례대로 넣습니다. 마지막 접수 완료 화면까지 확인하세요.</p></section>'''
@@ -376,25 +376,33 @@ def build_practice() -> None:
     copy(ROOT / "practice-files" / "upload-practice.txt", PUBLIC / "files" / "upload-practice.txt")
     body = '''<div class="hero"><p class="number">1차·2차 공통 준비</p><h1>파일 제출을<br>먼저 연습해요</h1><p class="lead">내 Google 계정으로 로그인하고, 작은 파일 하나를 첨부해 제출 완료 화면까지 확인합니다.</p></div>
 <div class="route">연습 파일 받기 <span>→</span> 개인 계정 로그인 <span>→</span> 파일 첨부 <span>→</span> 제출 완료 확인</div>
-<div class="callout"><strong>이 설문은 연습용입니다.</strong><p>성적에 반영되지 않으며 여러 번 연습할 수 있습니다. 연습을 마쳐도 1차·2차 수행평가 제출이 완료되는 것은 아닙니다. 실제 과제는 각 안내 페이지의 제출 설문으로 내세요.</p></div>'''
+<div class="callout practice-repeat"><strong>연습 횟수 제한 없음</strong><p><b>로그인 성공 · 학번_이름 파일명 · 제출 완료</b> 세 가지를 모두 확인할 때까지 충분히 반복 연습하세요. 여러 번 제출해도 됩니다.</p><p>이 설문은 연습용이며 성적에 반영되지 않습니다. 연습을 마쳐도 1차·2차 수행평가 제출이 완료되는 것은 아닙니다. 실제 과제는 각 안내 페이지의 제출 설문으로 내세요.</p></div>'''
     body += section("준비물은 두 가지예요", '<ul><li>본인이 사용할 수 있는 <strong>개인 Google 계정</strong></li><li>아래에서 내려받는 작은 연습 파일 1개</li></ul><p>연습 파일 내용은 고칠 필요가 없습니다. <strong>파일 이름은 반드시 본인의 학번_이름_연습.txt로 바꾸세요.</strong></p><p>파일을 업로드하고 제출하면 Google 계정의 이름·이메일·프로필 사진이 자동으로 기록됩니다.</p><div class="practice-actions">' + link("files/upload-practice.txt", "① 연습 파일 받기 (.txt)", "button") + link(PRACTICE_FORM, "② 연습 설문 열기 ↗", "button") + '</div><p class="practice-small">설문은 새 탭에서 열립니다. 이 안내를 옆에 두고 차례대로 따라 하세요.</p>')
     body += section("처음부터 차례대로 따라 하세요", '''<ol class="steps practice-steps">
 <li><strong>연습 파일을 내려받아요</strong><p>위의 <b>① 연습 파일 받기</b>를 누릅니다. 보통 컴퓨터의 <b>다운로드</b> 폴더에 <code>upload-practice.txt</code>가 저장됩니다. 저장 위치를 확인한 뒤 파일을 선택하고 <b>이름 바꾸기</b>로 <b>본인의 학번_이름_연습.txt</b>로 바꿉니다. 예: <code>20601_홍길동_연습.txt</code>. <b>.txt 확장자는 지우거나 바꾸지 마세요.</b></p></li>
 <li><strong>내 개인 Google 계정으로 로그인해요</strong><p><b>② 연습 설문 열기</b>를 누릅니다. 로그인 화면이 나오면 내 개인 Google 계정으로 로그인합니다. 친구·교사·공용 계정을 사용하지 마세요. 비밀번호는 설문 문항에 적지 않습니다.</p></li>
 <li><strong>설문에 표시된 계정을 확인해요</strong><p>설문 위쪽 이메일이 내 계정인지 확인합니다. 다른 사람의 계정이면 <b>계정 전환</b>을 눌러 내 계정으로 바꾸세요. <b>연습 별명</b>은 선택 문항이며, 쓰고 싶으면 <b>연습01</b>처럼 적으면 됩니다.</p></li>
 <li><strong>파일을 선택하고 업로드해요</strong><p>파일 첨부 문항에서 <b>파일 추가</b>를 누릅니다. <b>업로드 → 찾아보기(Browse)</b> 또는 파일 선택 버튼을 눌러 다운로드 폴더에서 <b>본인의 학번과 이름으로 바꾼 연습 파일</b>을 선택하세요. 예: <code>20601_홍길동_연습.txt</code>. 파일을 고르면 업로드가 시작됩니다. 별도로 <b>업로드</b> 버튼이 보이면 누르세요. 업로드가 끝나고 설문지에 파일명이 나타날 때까지 기다립니다.</p></li>
-<li><strong>첨부한 파일 이름을 확인해요</strong><p>설문 문항 안의 첨부 파일 이름에 <b>본인의 학번과 이름</b>이 표시되는지 확인합니다. 예: <code>20601_홍길동_연습.txt</code>. 잘못 고른 파일이면 옆의 삭제 버튼으로 지운 뒤 다시 첨부하세요. 파일 이름이 보이면 <b>제출 전 확인</b> 문항에서 <b>내 개인 Google 계정으로 로그인했고, 올린 파일명을 확인했습니다.</b>에 체크합니다.</p></li>
-<li><strong>제출 버튼을 누르고 완료 화면을 확인해요</strong><p>맨 아래 <b>제출</b>을 누릅니다. <b>파일 제출 연습이 완료되었습니다.</b>라는 안내가 나타나면 성공입니다. 파일 첨부만 하고 창을 닫으면 제출되지 않습니다.</p></li>
+<li><strong>설문의 제출 전 체크리스트 3개를 확인해요</strong><p>설문 문항 안의 첨부 파일 이름에 <b>본인의 학번과 이름</b>이 표시되는지 확인합니다. 예: <code>20601_홍길동_연습.txt</code>. 잘못 고른 파일이면 옆의 삭제 버튼으로 지운 뒤 다시 첨부하세요. <b>제출 전 체크리스트 (3개 모두 확인)</b>에서 실제로 확인한 세 항목에 모두 체크합니다.</p><ul><li><b>① 로그인 성공:</b> 내 개인 Google 계정으로 로그인했고, 설문 위쪽 이메일이 내 계정입니다.</li><li><b>② 파일명 확인:</b> 첨부 파일 이름이 본인의 학번_이름_연습.txt 형식입니다.</li><li><b>③ 파일 첨부 성공:</b> 업로드가 끝나고 설문 문항에 첨부 파일 이름이 표시됩니다.</li></ul><p><b>체크하거나 파일을 첨부한 것만으로 제출이 끝나지는 않습니다.</b> 다음 단계에서 반드시 제출 버튼을 누르세요.</p></li>
+<li><strong>제출 버튼을 누르고 완료 화면을 확인해요</strong><p>맨 아래 <b>제출</b>을 누릅니다. <b>파일 제출 연습이 완료되었습니다.</b>라는 안내가 나타났는지 확인하세요. <b>파일 첨부만 하고 창을 닫으면 제출되지 않습니다.</b> 접수 완료 화면을 확인한 뒤 이 페이지로 돌아와 <a href="#practice-checklist">연습 결과 자기 체크리스트</a>를 확인합니다.</p></li>
 </ol>''', "how-to")
+    body += section("연습 결과를 직접 확인하세요", '''<p>연습 설문을 제출한 뒤 이 페이지로 돌아와 확인한 항목에 체크하세요. <strong>세 가지를 모두 확인할 때까지 충분히 반복 연습하세요.</strong></p>
+<fieldset class="practice-checklist" aria-describedby="practice-checklist-help"><legend>연습 결과 자기 체크리스트</legend>
+<label><input type="checkbox" name="practice-login"><span><strong>① 개인 Google 계정 로그인 성공</strong>내 개인 Google 계정으로 로그인했고, 설문 위쪽에 내 이메일이 표시되는 것을 확인했습니다.</span></label>
+<label><input type="checkbox" name="practice-filename"><span><strong>② 학번_이름 파일명 확인</strong>컴퓨터의 파일과 설문에 첨부한 파일 모두 본인의 <code>학번_이름_연습.txt</code> 형식인지 확인했습니다. 예: <code>20601_홍길동_연습.txt</code>.</span></label>
+<label><input type="checkbox" name="practice-submitted"><span><strong>③ 파일 제출 성공</strong>파일 첨부 후 <b>제출</b> 버튼을 눌렀고, <b>파일 제출 연습이 완료되었습니다.</b>라는 접수 완료 화면을 직접 확인했습니다.</span></label>
+</fieldset><p id="practice-checklist-help" class="practice-small">이 체크리스트는 자기 확인용입니다. Google 설문의 로그인·첨부·접수 상태를 자동으로 검사하거나 제출하지 않습니다. 체크 표시만으로 제출 성공을 확인할 수 없으므로 설문의 실제 화면을 보고 체크하세요.</p>
+<div class="callout practice-repeat"><strong>아직 확인하지 못한 항목이 있나요?</strong><p><b>연습 횟수 제한 없음</b> · 아래 버튼으로 설문을 다시 열어 부족한 단계를 연습하세요. 완료 화면의 <b>다른 응답 제출</b>을 눌러도 다시 연습할 수 있습니다. 첨부 파일 이름과 마지막 접수 완료 화면까지 확인합니다.</p></div>
+<div class="practice-actions">''' + link(PRACTICE_FORM, "다시 연습 제출하기 · 횟수 제한 없음 ↗", "button") + '</div>', "practice-checklist")
     body += section("막히면 여기부터 확인하세요", '''<dl class="practice-help">
 <dt>다른 사람의 이메일이 표시돼요.</dt><dd>설문 위쪽의 <b>계정 전환</b>을 누르세요. 여러 계정이 있으면 본인의 개인 계정을 선택한 뒤 표시된 이메일을 다시 확인합니다.</dd>
 <dt>계정이 없거나 로그인할 수 없어요.</dt><dd>제출 마감 전에 교사에게 알려 도움을 받으세요. 다른 사람의 계정을 빌려서 제출하지 않습니다.</dd>
 <dt>파일이 어디 있는지 모르겠어요.</dt><dd>다운로드 폴더에서 본인의 <code>학번_이름_연습.txt</code>를 찾으세요. 아직 이름을 바꾸지 않았다면 <code>upload-practice.txt</code>를 찾아 이름을 바꿉니다. 파일이 없으면 이 페이지에서 다시 받습니다.</dd>
 <dt>업로드가 안 되거나 파일이 너무 크다고 해요.</dt><dd>연습 설문에는 <b>파일 1개, 10MB 이하</b>를 첨부합니다. 여기서 제공한 작은 .txt 파일을 고르고 업로드가 끝날 때까지 기다리세요. 인터넷 연결과 내 계정 로그인 상태도 확인합니다.</dd>
 <dt>권한이 없다는 화면이 나와요.</dt><dd>개인 Google 계정으로 로그인했는지 확인합니다. 계속 막히면 오류 문구를 교사에게 보여 주세요.</dd>
-<dt>제출 버튼을 눌러도 다음 화면으로 넘어가지 않아요.</dt><dd>빨간색으로 표시된 필수 문항을 확인하세요. 파일 첨부와 확인 체크를 마친 뒤 다시 제출합니다.</dd>
+<dt>제출 버튼을 눌러도 다음 화면으로 넘어가지 않아요.</dt><dd>빨간색으로 표시된 필수 문항을 확인하세요. 파일 첨부와 <b>제출 전 체크리스트 3개</b>를 모두 확인한 뒤 다시 제출합니다. <b>파일 제출 연습이 완료되었습니다.</b> 화면이 나올 때까지 확인하세요.</dd>
 </dl>''')
-    body += section("연습을 마쳤다면", '''<ul><li>내 계정으로 로그인했다.</li><li>첨부한 파일 이름에 본인의 학번과 이름이 들어 있는지 확인했다.</li><li>제출 버튼을 누르고 접수 완료 화면을 확인했다.</li></ul><p>공용 컴퓨터에서는 사용을 마친 뒤 <strong>Google 계정에서 로그아웃</strong>하세요. 창을 닫는 것만으로 로그아웃되는 것은 아닙니다.</p><p>이제 실제 과제의 안내에 따라 제출물을 준비하세요. 1차는 .ows와 화면 캡처, 2차는 실행 결과가 저장된 .ipynb를 제출합니다.</p><div class="practice-actions"><a class="button" href="orange.html">1차 안내로 이동</a><a class="button" href="python.html">2차 안내로 이동</a></div>''')
+    body += section("연습을 마쳤다면", '''<p>위의 <a href="#practice-checklist">자기 체크리스트 세 가지</a>를 실제 화면에서 모두 확인했다면 다음 단계로 갑니다. 아직 익숙하지 않다면 횟수 제한 없이 다시 연습하세요.</p><p>공용 컴퓨터에서는 사용을 마친 뒤 <strong>Google 계정에서 로그아웃</strong>하세요. 창을 닫는 것만으로 로그아웃되는 것은 아닙니다.</p><p>이제 실제 과제의 안내에 따라 제출물을 준비하세요. 1차는 .ows와 화면 캡처, 2차는 실행 결과가 저장된 .ipynb를 제출합니다.</p><div class="practice-actions"><a class="button" href="orange.html">1차 안내로 이동</a><a class="button" href="python.html">2차 안내로 이동</a></div>''')
     (PUBLIC / "practice.html").write_text(shell("Google 로그인·파일 제출 연습", "practice", body), encoding="utf-8")
 
 
