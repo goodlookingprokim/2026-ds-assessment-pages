@@ -66,7 +66,7 @@ def main() -> None:
         )):
             failures.append(f"Missing one-submission / lowest-total policy or practice exception: {page.relative_to(ROOT)}")
         if page.name != "practice.html":
-            for obsolete in ("답부터", "자료부터 제출", "파일 보완 필요", "응답 수정 링크", "제출한 뒤 고쳤다면", "최신 유효 응답", "준비된 답변과 파일을 마감일까지 제출"):
+            for obsolete in ("답부터", "자료부터 제출", "파일 보완 필요", "응답 수정 링크", "제출한 뒤 고쳤다면", "최신 유효 응답", "준비된 답변과 파일을 마감일까지 제출", "보완 제출은 처음과", "일곱 답변을 비워", "부족한 파일이 있다면 사유", "선택 입력으로 표시된 항목"):
                 if obsolete in text:
                     failures.append(f"Obsolete partial/repeat submission guidance: {page.relative_to(ROOT)} ({obsolete})")
         policy = re.search(r'<aside class="example-policy".*?</aside>', text, re.S)
@@ -99,6 +99,15 @@ def main() -> None:
             if not target.is_relative_to(ROOT.resolve()) or not target.exists():
                 failures.append(f"Broken local link: {page.relative_to(ROOT)} -> {ref}")
             count += 1
+    for path in ROOT.rglob("*.md"):
+        text = path.read_text(encoding="utf-8")
+        for obsolete in ("최신 유효 응답", "보완 제출은 처음과", "일곱 답변을 비워", "답부터 제출", "답변부터 제출", "응답 수정 링크", "준비된 답변과 파일을 마감일까지 제출"):
+            if obsolete in text:
+                failures.append(f"Obsolete Markdown submission guidance: {path.relative_to(ROOT)} ({obsolete})")
+        if path.parent.name == "orange-guide":
+            for required in ("2026년 11월 6일까지", "1회만", "제출 버튼을 누르기 전에 교사에게 문의하세요.", "가장 낮은 총점을 받은 제출물"):
+                if required not in text:
+                    failures.append(f"Missing current Orange Markdown policy: {path.relative_to(ROOT)} ({required})")
     csvs = list((ROOT / "orange-guide/downloads/학생배포/CSV").glob("[0-9][0-9]_*.csv"))
     if len(csvs) != 30:
         failures.append(f"Expected 30 individual CSV files; found {len(csvs)}")
