@@ -235,8 +235,8 @@ def build_orange() -> None:
     assert len(rows) == 30, f"Expected 30 CSV files, found {len(rows)}"
     body = '''<div class="hero"><p class="number">1차 수행평가 · Orange</p><h1>자료 하나로<br>그래프 하나 만들기</h1>
 <p class="lead">관심 있는 자료를 골라 표와 그래프를 만들고, 발견한 내용을 내 말로 설명합니다.</p>
-<div class="date"><strong>평가: 11월 2~6일</strong><strong>제출 마감: 11월 6일까지</strong></div>
-<p>결석 등으로 이후 제출해야 하는 경우에도 이 설문지에서 제출할 수 있습니다.</p></div>
+<div class="date"><strong>평가: 11월 2~6일</strong><strong>제출 마감: 2026년 11월 6일까지</strong></div>
+</div>
 <div class="route">자료 선택 <span>→</span> 표·그래프 <span>→</span> 파일·화면 저장 <span>→</span> 답변 7개 <span>→</span> 설문 제출</div>'''
     body += section("먼저 받을 자료", '<p>30개 주제 중 마음에 드는 <strong>CSV 한 개</strong>를 고르세요. 파일마다 가상 사례 180개와 공통 열 11개가 있어 표와 그래프를 연습할 수 있습니다. 실제 사람의 기록이 아니며, 다른 주제나 직접 준비한 자료를 써도 됩니다.</p><ul class="resource-list">' +
         file_item("files/orange-csv-30.zip", "CSV 30종 한 번에 받기", "여러 주제를 둘러볼 때") +
@@ -253,7 +253,7 @@ def build_orange() -> None:
 <li><strong>Google 설문으로 제출</strong><p>학번·이름·과제 제목, 일곱 답변과 파일을 차례대로 넣고 접수 완료 화면을 확인합니다.</p></li></ol>''', "steps")
     body += section("제출 전 확인", '''<div class="callout"><strong>제출물</strong><p>.ows 파일 1개 + 전체 연결 화면 1장 + 결과 화면 1장 + 설문 답변 7개</p><p>교사 제공 CSV는 주제 번호만 적습니다. 직접 준비한 자료라면 실제 사용한 CSV·Excel 원본과 출처를 함께 제출하고, Excel의 시트 이름도 적습니다.</p></div>
 <p>30점 = 답변 21점 + 자료 읽기·연결 4점 + 분석 결과 5점. 답변은 문항에 맞는 완결 문장 3개 이상 3점, 2개 2점, 1개 1점, 없으면 0점입니다. 같은 뜻의 반복은 한 번만 셉니다.</p>
-<p>파일 문제로 막히면 준비된 답변과 파일부터 11월 6일까지 제출하고 교사에게 알리세요. 원래 작업의 누락·손상·경로 문제는 11월 9일 23:59까지 보완할 수 있습니다. 그 기간에 답변 수정이나 새 분석을 추가할 수는 없습니다.</p>''')
+<p>파일 문제가 생기면 준비된 답변과 파일을 마감일까지 제출하고 교사에게 알리세요.</p>''')
     body += section("실습 영상", '<p>먼저 질문 선택 영상에서 다양한 축을 살펴보세요. 다음 영상은 새 작업 화면에서 위젯을 배치하고 현재 11열 CSV를 불러온 뒤 File의 두 갈래 연결, 표, 그래프를 순서대로 보여 줍니다. 참여·성과는 조작 예시 한 가지이므로 자신의 질문에 맞춰 축과 색을 바꾸세요.</p><video controls preload="metadata" width="100%"><source src="orange-guide/question-choices.mp4" type="video/mp4"><track kind="captions" src="orange-guide/question-choices.vtt" srclang="ko" label="한국어" default></video><p>' + link("orange-guide/question-choices.mp4", "질문 선택 영상 받기") + '</p><video controls preload="metadata" width="100%" poster="orange-guide/assets/csv_video_start.png"><source src="orange-guide/manual.mp4" type="video/mp4"><track kind="captions" src="orange-guide/subtitles.vtt" srclang="ko" label="한국어" default></video><p>' + link("orange-guide/manual.mp4", "기본 조작 영상 받기") + '</p>')
     body += section("주제별 CSV", '<p>하나만 골라도 됩니다. 내려받은 CSV의 내용은 바꾸지 말고 자신의 Orange 작업 파일을 만드세요.</p><ul class="topic-list">' + ''.join(rows) + '</ul>', "topics")
     body += '<div class="submit"><div><h2>이제 제출하세요</h2><p>Google 계정으로 설문을 열고 답변과 파일을 확인한 뒤, 제출 완료 화면까지 보세요.</p></div>' + link(ORANGE_FORM, "1차 제출 설문 열기", "button") + '</div>'
@@ -303,7 +303,7 @@ def build_python() -> None:
         copy(png, guide / "images" / png.name)
     body = '''<div class="hero"><p class="number">2차 수행평가 · Python</p><h1>내 자료로<br>계산·표·그래프 만들기</h1>
 <p class="lead">예시 노트북을 내 주제와 자료에 맞게 바꾸고, 실행 결과를 저장해 설명합니다.</p>
-<div class="date"><strong>평가 11월 9~13일</strong><strong>제출 마감 2026년 11월 13일까지</strong></div></div>
+<div class="date"><strong>평가: 11월 9~13일</strong><strong>제출 마감: 2026년 11월 13일까지</strong></div></div>
 <div class="route">예시 받기 <span>→</span> 내 자료로 바꾸기 <span>→</span> 모두 실행 <span>→</span> .ipynb 저장 <span>→</span> 답변·파일 제출</div>'''
     body += section("먼저 받을 자료", '<p>아래 파일은 이 페이지에서 바로 받을 수 있습니다. 예시 노트북의 <strong>★ 1. 내 자료</strong> 셀부터 바꾸세요. 예시 코드는 그대로 사용해도 됩니다.</p><ul class="resource-list">' +
         file_item("python-guide/기본예시_축제.ipynb", "축제 기본 예시 노트북", "Google Colab에서 업로드해 사본 저장") +
@@ -327,8 +327,8 @@ def build_python() -> None:
 def build_index() -> None:
     body = '''<div class="hero index-hero"><h1>2026 데이터과학<br>수행평가 안내</h1><p class="lead">1차와 2차 안내, 실습 자료, 제출 순서를 한곳에서 확인하세요.</p></div>
 <section class="section"><h2>처음 제출한다면 먼저 연습하세요</h2><p>개인 Google 계정 로그인부터 파일 첨부, 제출 완료 화면 확인까지 연습합니다. 연습은 성적에 반영되지 않으며, 실제 수행평가는 아래 1차·2차 설문에 따로 제출합니다.</p><a class="button" href="practice.html">파일 제출 연습과 사용 방법 →</a></section>
-<div class="choice-grid"><a class="choice" href="orange.html"><span>1차 · Orange</span><h2>자료 하나로 그래프 하나 만들기</h2><p>평가: 11월 2~6일 · 제출 마감: 11월 6일까지</p><strong>안내와 자료 보기 →</strong></a>
-<a class="choice" href="python.html"><span>2차 · Python</span><h2>내 자료로 계산·표·그래프 만들기</h2><p>11월 9~13일 · 제출 마감 2026년 11월 13일까지</p><strong>안내와 자료 보기 →</strong></a></div>
+<div class="choice-grid"><a class="choice" href="orange.html"><span>1차 · Orange</span><h2>자료 하나로 그래프 하나 만들기</h2><p>평가: 11월 2~6일 · 제출 마감: 2026년 11월 6일까지</p><strong>안내와 자료 보기 →</strong></a>
+<a class="choice" href="python.html"><span>2차 · Python</span><h2>내 자료로 계산·표·그래프 만들기</h2><p>평가: 11월 9~13일 · 제출 마감: 2026년 11월 13일까지</p><strong>안내와 자료 보기 →</strong></a></div>
 <section class="section"><h2>제출 순서</h2><p>각 페이지에서 필요한 파일을 받고 실습 방법을 익힌 뒤, 해당 Google 설문에 일곱 답변과 파일을 차례대로 넣습니다. 마지막 접수 완료 화면까지 확인하세요.</p></section>'''
     (PUBLIC / "index.html").write_text(shell("수행평가 안내", "", body))
 
