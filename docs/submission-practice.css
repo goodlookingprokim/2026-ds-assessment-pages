@@ -1,7 +1,17 @@
 .login-notice{box-sizing:border-box;margin:0;background:#fff4cd;color:#293220;border-bottom:2px solid #9c7922;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;font-size:16px;line-height:1.6}
 .login-notice-inner{width:min(100% - 40px,1040px);margin:auto;padding:15px 0}
 .login-notice p{margin:0 0 5px;max-width:none}
-.login-notice p:first-child{font-size:19px;line-height:1.5}
+.login-notice .submission-notice-title{font-size:20px;font-weight:800;line-height:1.5;margin-bottom:12px}
+.submission-rules{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:10px}
+.submission-rule{min-width:0;border:2px solid #9c7922;border-radius:10px;background:#fffef8;padding:14px 16px}
+.submission-rule>strong{display:block;color:#322708;font-size:21px;line-height:1.5;margin-bottom:7px}
+.submission-rule p{font-size:16px}
+.submission-rule code,.filename-check code{white-space:normal;overflow-wrap:anywhere;background:#f4e8bc;color:#322708;padding:2px 4px;border-radius:3px}
+.login-notice .submission-name-example{font-size:14px;line-height:1.8;margin-top:8px}
+.login-notice .submission-scope{font-size:14px}
+.filename-check{margin:18px 0;padding:18px 20px;border:2px solid #9c7922;border-radius:10px;background:#fff4cd;color:#293220}
+.filename-check>strong{display:block;font-size:21px;line-height:1.5;margin-bottom:8px}
+.filename-check p:last-child{margin-bottom:0}
 .login-required{display:inline-block;margin-right:4px;padding:1px 7px;border-radius:4px;background:#4c3510;color:#fff;font-weight:800;font-size:15px;vertical-align:2px}
 .login-notice a{color:#174c80;text-decoration:underline;text-underline-offset:3px;font-weight:750}
 .login-notice a:hover{color:#145c4c}
@@ -14,4 +24,4 @@
 .practice-steps li{padding-bottom:22px}
 .practice-help dt{font-weight:800;margin-top:22px}
 .practice-help dd{margin:6px 0 0;max-width:790px}
-@media(max-width:700px){.login-notice-inner{width:calc(100% - 28px);padding:12px 0}.login-notice{font-size:15px}.login-notice p:first-child{font-size:17px}.practice-actions .button{width:100%;text-align:center}}
+@media(max-width:700px){.login-notice-inner{width:calc(100% - 28px);padding:12px 0}.login-notice{font-size:15px}.login-notice .submission-notice-title{font-size:18px}.submission-rules{grid-template-columns:1fr;gap:10px}.submission-rule{padding:12px}.submission-rule>strong{font-size:19px}.practice-actions .button{width:100%;text-align:center}}

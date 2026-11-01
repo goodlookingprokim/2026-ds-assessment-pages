@@ -53,6 +53,8 @@ def main() -> None:
         notice = re.search(r'<aside class="login-notice".*?</aside>', text, re.S)
         if not notice or "반드시 본인의 개인 Google 계정으로 로그인하세요" not in notice.group(0) or notice.start() > text.index("<h1"):
             failures.append(f"Missing top personal-account login notice: {page.relative_to(ROOT)}")
+        if not notice or any(phrase not in notice.group(0) for phrase in ("개인 Google 계정 로그인 → 설문 작성", "모든 제출 파일명에 학번_이름 필수", "확장자는 그대로")):
+            failures.append(f"Missing mandatory login-before-writing or filename rule: {page.relative_to(ROOT)}")
         if "PRACTICE_FORM_URL_PENDING" in text:
             failures.append(f"Unpublished practice form URL: {page.relative_to(ROOT)}")
         visible = re.sub(r"<style.*?</style>|<script.*?</script>", " ", text, flags=re.I | re.S)
@@ -93,7 +95,7 @@ def main() -> None:
     assessed_forms = set(re.findall(r'https://docs\.google\.com/forms/[^"<> ]+', (ROOT / "orange.html").read_text() + (ROOT / "python.html").read_text())) - practice_forms
     if len(practice_forms) != 1 or len(assessed_forms) != 2:
         failures.append("Practice must link to one separate form and preserve both assessed submission forms")
-    for phrase in ("파일 추가", "업로드", "파일 이름", "파일 제출 연습이 완료되었습니다.", "여러 번", "성적에 반영되지", "로그아웃", "10MB 이하"):
+    for phrase in ("파일 추가", "업로드", "파일 이름", "파일 제출 연습이 완료되었습니다.", "여러 번", "성적에 반영되지", "로그아웃", "10MB 이하", "학번_이름_연습.txt", "이름 바꾸기"):
         if phrase not in practice:
             failures.append(f"Missing practice instruction: {phrase}")
     sample = ROOT / "files/upload-practice.txt"
